@@ -10,7 +10,6 @@ void imprimir_texto(ALLEGRO_FONT *letra, string nombre) {
 	al_draw_text(letra, al_map_rgb(255, 163, 1), 400, 170, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
 
 	al_draw_rectangle(250, 163, 550, 213, al_map_rgb(255, 255, 255), 5);
-	al_draw_filled_rectangle(174, 159, 230, 215, al_map_rgb(255, 255, 255));
 	al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
 
 	al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
@@ -59,12 +58,17 @@ string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
 
 		switch(evento.type){
 		case ALLEGRO_EVENT_KEY_CHAR:
-			if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-				if (nombre.length() == 0) {
+			if(evento.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				if(nombre.length() == 0){
 					al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
 				} 
-				else {
-					//al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+				else{
+					/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+
+					al_rest(0.3);
+					al_clear_to_color(al_map_rgb(0, 0, 0));
+					al_flip_display();
+					al_rest(0.3);*/
 					finalizado = true;
 				} 
 			} 
@@ -73,7 +77,7 @@ string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
 				if(aux != '+' && nombre.length() < 10){
 					//al_play_sample(tecla, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
-				if (aux != '+' && aux != '-' && nombre.length() < 10){
+				if(aux != '+' && aux != '-' && nombre.length() < 10){
 					nombre.push_back(aux);
 					imprimir_texto(letra, nombre);
 				}

@@ -11,11 +11,24 @@
 #include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
-#include <iostream>
+#include <fstream>
 #include <string>
 
 //-----Espacio de nombres-----//.
 using namespace std;
+
+//-----Estructuras-----//.
+struct Datos_Guardar{
+    char nombre[50];
+    int puntaje;
+    char fecha[40];
+};
+
+struct Datos{
+    string nombre;
+    int puntaje;
+    string fecha;
+};
 
 //-----Funciones-----//.
 //Inicialización e instalación de múltiples componentes de Allegro.

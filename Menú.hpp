@@ -21,6 +21,12 @@ void imprimir_elementos(ALLEGRO_FONT* letra, int seleccion){
     al_draw_filled_rectangle(50, 200, 150, 300, al_map_rgb(255, 255, 255));
     al_draw_filled_rectangle(650, 200, 750, 300, al_map_rgb(255, 255, 255));
     al_draw_text(letra, al_map_rgb(245, 206, 170), 400, 410, ALLEGRO_ALIGN_CENTRE, "'SELECCIONE UNA OPCION'");
+
+    switch (seleccion){
+    case 1: al_draw_rectangle(199, 49, 601, 110, al_map_rgb(255, 255, 81), 5.0); break;
+    case 2: al_draw_rectangle(249, 169, 551, 231, al_map_rgb(255, 255, 81), 5.0); break;
+    case 3: al_draw_rectangle(319, 289, 482, 351, al_map_rgb(255, 255, 81), 5.0); break;
+    }
     al_flip_display();
 }
 
@@ -28,17 +34,17 @@ void imprimir_elementos(ALLEGRO_FONT* letra, int seleccion){
 int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra){
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     bool continuar = false, reanudar, sonido = false;
-    int x = 0, y = 0, retorno, auxiliar = 4;
+    int x = 0, y = 0, retorno, auxiliar = 4, seleccion = 0;
 
     al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
     al_register_event_source(fila_evento, al_get_mouse_event_source());
     imprimir_elementos(letra, auxiliar);
 
-    while (!continuar) {
+    while(!continuar){
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_evento, &evento);
 
-        switch (evento.type) {
+        switch(evento.type){
         case ALLEGRO_EVENT_MOUSE_AXES:
             x = evento.mouse.x;
             y = evento.mouse.y;
@@ -59,15 +65,21 @@ int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra){
             if(auxiliar >= 1 && auxiliar <= 3){
                 retorno = auxiliar;
                 continuar = true;
+                /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+
+                al_rest(0.3);
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_flip_display();
+                al_rest(0.3);*/
             }
             break;
         case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
             reanudar = false;
-            while (!reanudar) {
+            while(!reanudar){
                 ALLEGRO_EVENT evento2;
                 al_wait_for_event(fila_evento, &evento2);
 
-                if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
+                if(evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN){
                     imprimir_elementos(letra, auxiliar);
                     reanudar = true;
                 }

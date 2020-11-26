@@ -37,15 +37,14 @@ void imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra){
     al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
     al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
     al_start_timer(temporizador);
-    imprimir_texto(letra, contador, parpadeo);
 
-    while (!continuar) {
+    while(!continuar){
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_evento, &evento);
 
-        switch (evento.type) {
+        switch(evento.type){
         case ALLEGRO_EVENT_KEY_DOWN:
-            if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+            if(evento.keyboard.keycode == ALLEGRO_KEY_ENTER){
                 /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
                 al_rest(0.3);
@@ -57,7 +56,7 @@ void imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra){
             break;
         case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
             reanudar = false;
-            while (!reanudar) {
+            while(!reanudar){
                 ALLEGRO_EVENT evento2;
                 al_wait_for_event(fila_evento, &evento2);
 

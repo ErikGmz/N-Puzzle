@@ -7,7 +7,10 @@
 #include "Inicio.hpp"
 #include "Menú.hpp"
 #include "Nombres.hpp"
-#include <cstdlib>
+#include "Menú récords.hpp"
+#include "Sistema archivos.hpp"
+#include "Selector dificultad.hpp"
+#include "Selector modo.hpp"
 
 //-----Función main-----//.
 int main(){
@@ -17,9 +20,12 @@ int main(){
     al_set_window_position(pantalla, 200, 100);
     al_set_window_title(pantalla, "N-Puzzle");
 
-    imprimir_titulo(pantalla, titulo);
-    imprimir_menu(pantalla, titulo);
-    solicitar_nombre(pantalla, titulo);
+    imprimir_selector(pantalla, titulo);
+    //imprimir_titulo(pantalla, titulo);
+    //imprimir_menu(pantalla, titulo);
+    //solicitar_nombre(pantalla, titulo);
+    //imprimir_records(pantalla);
+    imprimir_modos(pantalla, titulo);
 
     al_rest(100);
     al_destroy_display(pantalla);
