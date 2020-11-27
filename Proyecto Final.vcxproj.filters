@@ -47,5 +47,20 @@
     <ClInclude Include="Selector modo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Confirmar eliminación.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Eliminar registro.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Salida.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fin juego.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Solicitar puzzle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,0 +1,14 @@
+﻿  N-Puzzle.cpp
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_init_image_addon
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_init_ttf_addon
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_destroy_font
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_init_font_addon
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_install_audio
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_draw_text
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_init_primitives_addon
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_show_native_message_box
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_draw_rectangle
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_init_acodec_addon
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_draw_filled_rectangle
+N-Puzzle.obj : error LNK2001: unresolved external symbol __imp_al_load_font
+C:\Users\erikg\Desktop\Proyecto Final\x64\Release\Proyecto Final.exe : fatal error LNK1120: 12 unresolved externals

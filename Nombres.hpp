@@ -4,12 +4,12 @@
 
 //-----Funciones-----//.
 //Se imprime la interfaz para la solicitud del nombre.
-void imprimir_texto(ALLEGRO_FONT *letra, string nombre) {
+void imprimir_texto(ALLEGRO_FONT* letra, string nombre) {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(letra, al_map_rgb(245, 206, 170), 400, 50, ALLEGRO_ALIGN_CENTRE, "'INGRESE SU NOMBRE'");
-	al_draw_text(letra, al_map_rgb(255, 163, 1), 400, 170, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
+	al_draw_text(letra, al_map_rgb(255, 255, 139), 400, 50, ALLEGRO_ALIGN_CENTRE, "INGRESE SU NOMBRE");
+	al_draw_text(letra, al_map_rgb(228, 199, 255), 400, 170, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
 
-	al_draw_rectangle(250, 163, 550, 213, al_map_rgb(255, 255, 255), 5);
+	al_draw_rectangle(250, 163, 550, 213, al_map_rgb(226, 158, 255), 5);
 	al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
 
 	al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
@@ -42,7 +42,7 @@ char convertir_entrada(ALLEGRO_EVENT evento) {
 }
 
 //Se retorna un nombre, escrito por teclado.
-string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
+string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
 	string nombre;
 	bool finalizado = false, reanudar;
@@ -52,17 +52,17 @@ string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
 	al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
 	imprimir_texto(letra, nombre);
 
-	while(!finalizado){
+	while (!finalizado) {
 		ALLEGRO_EVENT evento;
 		al_wait_for_event(fila_evento, &evento);
 
-		switch(evento.type){
+		switch (evento.type) {
 		case ALLEGRO_EVENT_KEY_CHAR:
-			if(evento.keyboard.keycode == ALLEGRO_KEY_ENTER){
-				if(nombre.length() == 0){
+			if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+				if (nombre.length() == 0) {
 					al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
-				} 
-				else{
+				}
+				else {
 					/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
 					al_rest(0.3);
@@ -70,18 +70,18 @@ string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
 					al_flip_display();
 					al_rest(0.3);*/
 					finalizado = true;
-				} 
-			} 
-			else{
+				}
+			}
+			else {
 				aux = convertir_entrada(evento);
-				if(aux != '+' && nombre.length() < 10){
+				if (aux != '+' && nombre.length() < 10) {
 					//al_play_sample(tecla, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
-				if(aux != '+' && aux != '-' && nombre.length() < 10){
+				if (aux != '+' && aux != '-' && nombre.length() < 10) {
 					nombre.push_back(aux);
 					imprimir_texto(letra, nombre);
 				}
-				if(aux == '-' && nombre.length() > 0){
+				if (aux == '-' && nombre.length() > 0) {
 					nombre.pop_back();
 					imprimir_texto(letra, nombre);
 				}
@@ -89,15 +89,19 @@ string solicitar_nombre(ALLEGRO_DISPLAY *pantalla, ALLEGRO_FONT *letra){
 			break;
 		case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
 			reanudar = false;
-			while(!reanudar){
+			while (!reanudar) {
 				ALLEGRO_EVENT evento2;
 				al_wait_for_event(fila_evento, &evento2);
 
-				if(evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN){
+				if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
 					imprimir_texto(letra, nombre);
 					reanudar = true;
 				}
 			}
+			break;
+		case ALLEGRO_EVENT_DISPLAY_CLOSE:
+			nombre = "-";
+			finalizado = true;
 			break;
 		}
 	}
