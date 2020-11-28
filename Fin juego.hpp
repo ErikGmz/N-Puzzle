@@ -19,7 +19,7 @@ void actualizar_archivo(Datos* entrada) {
     }
     Datos* aux1 = new Datos;
     Datos_Guardar* aux2 = new Datos_Guardar;
-    vector<Datos>* ordenamiento = new vector<Datos>;
+    list<Datos>* ordenamiento = new list<Datos>;
     bool encontrado = false;
 
     archivo.read(reinterpret_cast <char*>(aux2), sizeof(Datos_Guardar));
@@ -43,7 +43,7 @@ void actualizar_archivo(Datos* entrada) {
         aux1->fecha = entrada->fecha;
         ordenamiento->push_back(*aux1);
     }
-    sort(ordenamiento->begin(), ordenamiento->end(), ordenamiento_descendente);
+    ordenamiento->sort(ordenamiento_descendente);
 
     archivo.clear(); archivo.close();
     remove("registro.dat");
@@ -59,6 +59,7 @@ void actualizar_archivo(Datos* entrada) {
     delete aux1, aux2, ordenamiento;
 }
 
+//Se retorna un dígito en forma de caracter.
 char numero_a_caracter(int digito) {
     switch (digito) {
     case 0: return '0'; break;
@@ -75,6 +76,7 @@ char numero_a_caracter(int digito) {
     }
 }
 
+//Se convierte una cifra en un formato de tiempo.
 char* formato_tiempo(int tiempo) {
     string formato;
     int minutos = 0, segundos = 0, horas = 0;

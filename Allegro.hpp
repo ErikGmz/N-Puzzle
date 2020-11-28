@@ -14,8 +14,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <list>
+#include <ctime>
 #include <vector>
-#include <algorithm>
 
 //-----Espacio de nombres-----//.
 using namespace std;

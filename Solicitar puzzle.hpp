@@ -4,7 +4,7 @@
 
 //-----Funciones-----//.
 //Se verifica si la entrada actual es repetida/válida o no.
-bool entrada_valida(string** puzzle, int dificultad, int fila, int columna) {
+bool entrada_valida(vector<vector<string>> puzzle, int dificultad, int fila, int columna) {
     int limite;
 
     switch (dificultad) {
@@ -30,7 +30,7 @@ bool entrada_valida(string** puzzle, int dificultad, int fila, int columna) {
 }
 
 //Se imprimen los elementos para la solicitud del puzzle.
-void mostrar_interfaz(ALLEGRO_FONT* letra, string** puzzle, int dificultad, int contador, int fila, int columna, int tipo_puzzle) {
+void mostrar_interfaz(ALLEGRO_FONT* letra, vector<vector<string>> puzzle, int dificultad, int contador, int fila, int columna, int tipo_puzzle) {
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
     if(tipo_puzzle == 1) al_draw_text(letra, al_map_rgb(255, 195, 243), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
@@ -89,9 +89,8 @@ char validar_entrada(ALLEGRO_EVENT evento) {
 }
 
 //Se solicita que el usuario defina el puzzle inicial o final.
-string** solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, int dificultad, int tipo_puzzle) {
-    string** puzzle = new string* [dificultad];
-    for (int i = 0; i < dificultad; i++) puzzle[i] = new string[dificultad];
+vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, int dificultad, int tipo_puzzle) {
+    vector<vector<string>> puzzle(dificultad, vector<string>(dificultad, ""));
     bool cancelar = false;
     int contador = 0;
 

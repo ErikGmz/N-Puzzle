@@ -62,5 +62,11 @@
     <ClInclude Include="Solicitar puzzle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Finalizar demostración.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Juego manual.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

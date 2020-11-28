@@ -170,7 +170,9 @@
     <ClInclude Include="Allegro.hpp" />
     <ClInclude Include="Confirmar eliminación.hpp" />
     <ClInclude Include="Eliminar registro.hpp" />
+    <ClInclude Include="Finalizar demostración.hpp" />
     <ClInclude Include="Inicio.hpp" />
+    <ClInclude Include="Juego manual.hpp" />
     <ClInclude Include="Menú récords.hpp" />
     <ClInclude Include="Menú.hpp" />
     <ClInclude Include="Nombres.hpp" />
