@@ -7,9 +7,9 @@
 void imprimir_texto(ALLEGRO_FONT* letra, string nombre) {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_draw_text(letra, al_map_rgb(255, 255, 139), 400, 50, ALLEGRO_ALIGN_CENTRE, "INGRESE SU NOMBRE");
-	al_draw_text(letra, al_map_rgb(228, 199, 255), 400, 170, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
+	al_draw_text(letra, al_map_rgb(191, 253, 253), 400, 131, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
 
-	al_draw_rectangle(250, 163, 550, 213, al_map_rgb(226, 158, 255), 5);
+	al_draw_rectangle(240, 123, 560, 173, al_map_rgb(193, 255, 163), 5);
 	al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
 
 	al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
@@ -44,6 +44,10 @@ char convertir_entrada(ALLEGRO_EVENT evento) {
 //Se retorna un nombre, escrito por teclado.
 string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+	ALLEGRO_SAMPLE* tecleado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+	al_reserve_samples(5);
+
 	string nombre;
 	bool finalizado = false, reanudar;
 	char aux;
@@ -63,21 +67,21 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 					al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
 				}
 				else {
-					/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-					al_rest(0.3);
+					al_rest(0.5);
 					al_clear_to_color(al_map_rgb(0, 0, 0));
 					al_flip_display();
-					al_rest(0.3);*/
+					al_rest(0.5);
 					finalizado = true;
 				}
 			}
 			else {
 				aux = convertir_entrada(evento);
-				if (aux != '+' && nombre.length() < 10) {
-					//al_play_sample(tecla, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+				if (aux != '+' && nombre.length() < 8) {
+					al_play_sample(tecleado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
-				if (aux != '+' && aux != '-' && nombre.length() < 10) {
+				if (aux != '+' && aux != '-' && nombre.length() < 8) {
 					nombre.push_back(aux);
 					imprimir_texto(letra, nombre);
 				}
@@ -106,6 +110,8 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 		}
 	}
 	al_destroy_event_queue(fila_evento);
+	al_destroy_sample(avance);
+	al_destroy_sample(tecleado);
 	return nombre;
 }
 #endif

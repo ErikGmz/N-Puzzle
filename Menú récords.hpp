@@ -19,18 +19,18 @@ void agregar_elementos() {
 	ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 25, NULL);
 
 	al_draw_text(titulo, al_map_rgb(255, 163, 1), 400, 30, ALLEGRO_ALIGN_CENTRE, "RECORDS");
-	al_draw_text(letra, al_map_rgb(253, 198, 104), 400, 95, ALLEGRO_ALIGN_CENTRE, "Lugar    Nombre    Puntaje     Fecha    ");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 145, ALLEGRO_ALIGN_CENTRE, "1.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 190, ALLEGRO_ALIGN_CENTRE, "2.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 235, ALLEGRO_ALIGN_CENTRE, "3.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 280, ALLEGRO_ALIGN_CENTRE, "4.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 325, ALLEGRO_ALIGN_CENTRE, "5.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 370, ALLEGRO_ALIGN_CENTRE, "6.-");
-	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 415, ALLEGRO_ALIGN_CENTRE, "7.-");
+	al_draw_text(letra, al_map_rgb(253, 198, 104), 400, 80, ALLEGRO_ALIGN_CENTRE, "Lugar    Nombre    Puntaje     Fecha    ");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 125, ALLEGRO_ALIGN_CENTRE, "1.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 170, ALLEGRO_ALIGN_CENTRE, "2.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 215, ALLEGRO_ALIGN_CENTRE, "3.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 260, ALLEGRO_ALIGN_CENTRE, "4.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 305, ALLEGRO_ALIGN_CENTRE, "5.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 350, ALLEGRO_ALIGN_CENTRE, "6.-");
+	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 395, ALLEGRO_ALIGN_CENTRE, "7.-");
 	mostrar_registro(letra);
 
-	al_draw_filled_rectangle(65, 468, 121, 525, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(360, 468, 710, 525, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(65, 458, 121, 515, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(360, 458, 710, 515, al_map_rgb(255, 255, 255));
 	al_flip_display();
 
 	al_destroy_font(titulo); al_destroy_font(letra);
@@ -39,6 +39,10 @@ void agregar_elementos() {
 //Se imprime la tabla de los récords.
 int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+	al_reserve_samples(3);
+
 	bool continuar = false, reanudar, sonido = false;
 	int x = 0, y = 0, auxiliar = 3, retorno;
 
@@ -59,7 +63,7 @@ int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 			if (auxiliar >= 1 && auxiliar <= 2) {
 				if (!sonido) {
 					sonido = true;
-					//al_play_sample(opcion, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					al_play_sample(apuntado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			else {
@@ -68,12 +72,12 @@ int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 			break;
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 			if (auxiliar >= 1 && auxiliar <= 2) {
-				/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+				al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-				al_rest(0.3);
+				al_rest(0.5);
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				al_flip_display();
-				al_rest(0.3);*/
+				al_rest(0.5);
 				retorno = auxiliar;
 				continuar = true;
 			}
@@ -97,6 +101,8 @@ int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 		}
 	}
 	al_destroy_event_queue(fila_evento);
+	al_destroy_sample(avance);
+	al_destroy_sample(apuntado);
 	return retorno;
 }
 #endif

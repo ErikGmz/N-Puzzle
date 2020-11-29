@@ -129,14 +129,14 @@ char* formato_tiempo(int tiempo) {
 //Se imprimen los elementos de la interfaz.
 void posicionar_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo, Datos* jugador_actual, int tiempo) {
     al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_text(letra, al_map_rgb(245, 206, 170), 400, 50, ALLEGRO_ALIGN_CENTRE, "PARTIDA FINALIZADA");
+    al_draw_text(letra, al_map_rgb(255, 192, 201), 400, 50, ALLEGRO_ALIGN_CENTRE, "PARTIDA FINALIZADA");
     al_draw_text(letra, al_map_rgb(255, 204, 102), 400, 130, ALLEGRO_ALIGN_CENTRE, "EL PUNTAJE DEL JUGADOR");
     al_draw_text(letra, al_map_rgb(255, 204, 102), 400, 180, ALLEGRO_ALIGN_CENTRE, ((jugador_actual->nombre + " FUE " + to_string(jugador_actual->puntaje)).c_str()));
 
     al_draw_text(letra, al_map_rgb(229, 229, 255), 400, 260, ALLEGRO_ALIGN_CENTRE, "EL TIEMPO UTILIZADO FUE");
     al_draw_text(letra, al_map_rgb(229, 229, 255), 400, 310, ALLEGRO_ALIGN_CENTRE, formato_tiempo(tiempo));
 
-    if (contador == 67) {
+    if (contador == 55) {
         if (parpadeo) {
             parpadeo = false;
         }
@@ -153,6 +153,9 @@ void posicionar_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo, Datos*
 bool imprimir_fin_partida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, Datos* jugador_actual, int tiempo) {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
+    ALLEGRO_SAMPLE* avance1 = al_load_sample("Sounds/smw_message_block.wav");
+    al_reserve_samples(5);
+
     bool continuar = false, reanudar, parpadeo;
     int contador = 0;
 
@@ -169,12 +172,12 @@ bool imprimir_fin_partida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, Datos*
         switch (evento.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                al_play_sample(avance1, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-                al_rest(0.3);
+                al_rest(0.5);
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_flip_display();
-                al_rest(0.3);*/
+                al_rest(0.5);
                 continuar = true;
             }
             break;
@@ -201,6 +204,7 @@ bool imprimir_fin_partida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, Datos*
     al_destroy_event_queue(fila_evento);
     al_start_timer(temporizador);
     al_destroy_timer(temporizador);
+    al_destroy_sample(avance1);
     return true;
 }
 #endif

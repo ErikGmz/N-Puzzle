@@ -25,6 +25,10 @@ void mostrar_elementos(ALLEGRO_FONT* fuente) {
 //Se imprime el menú para confirmar la eliminación del registro.
 int imprimir_confirmacion(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+	al_reserve_samples(3);
+
 	bool continuar = false, reanudar, sonido = false;
 	int x = 0, y = 0, auxiliar = 3, retorno;
 
@@ -45,7 +49,7 @@ int imprimir_confirmacion(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 			if (auxiliar >= 1 && auxiliar <= 2) {
 				if (!sonido) {
 					sonido = true;
-					//al_play_sample(opcion, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					al_play_sample(apuntado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			else {
@@ -54,12 +58,12 @@ int imprimir_confirmacion(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 			break;
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 			if (auxiliar >= 1 && auxiliar <= 2) {
-				/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+				al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-				al_rest(0.3);
+				al_rest(0.5);
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				al_flip_display();
-				al_rest(0.3);*/
+				al_rest(0.5);
 				retorno = auxiliar;
 				continuar = true;
 			}
@@ -83,6 +87,8 @@ int imprimir_confirmacion(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 		}
 	}
 	al_destroy_event_queue(fila_evento);
+	al_destroy_sample(avance);
+	al_destroy_sample(apuntado);
 	return retorno;
 }
 #endif

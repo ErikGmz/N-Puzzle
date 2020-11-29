@@ -15,7 +15,7 @@ int posicionado4(int x, int y) {
 void colocar_elementos(ALLEGRO_FONT* fuente) {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 
-	al_draw_text(fuente, al_map_rgb(176, 255, 174), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE EL MODO");
+	al_draw_text(fuente, al_map_rgb(216, 227, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE EL MODO");
 
 	al_draw_filled_rectangle(290, 200, 510, 260, al_map_rgb(255, 255, 255));
 	al_draw_filled_rectangle(270, 360, 530, 420, al_map_rgb(255, 255, 255));
@@ -27,6 +27,10 @@ void colocar_elementos(ALLEGRO_FONT* fuente) {
 //Se imprime el selector de modos.
 int imprimir_modos(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+	al_reserve_samples(3);
+
 	bool continuar = false, reanudar, sonido = false;
 	int x = 0, y = 0, auxiliar = 4, retorno;
 
@@ -47,7 +51,7 @@ int imprimir_modos(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 			if (auxiliar >= 1 && auxiliar <= 3) {
 				if (!sonido) {
 					sonido = true;
-					//al_play_sample(opcion, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					al_play_sample(apuntado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			else {
@@ -56,12 +60,12 @@ int imprimir_modos(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 			break;
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 			if (auxiliar >= 1 && auxiliar <= 3) {
-				/*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+			    al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-				al_rest(0.3);
+				al_rest(0.5);
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				al_flip_display();
-				al_rest(0.3);*/
+				al_rest(0.5);
 				retorno = auxiliar;
 				continuar = true;
 			}
@@ -85,6 +89,8 @@ int imprimir_modos(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 		}
 	}
 	al_destroy_event_queue(fila_evento);
+	al_destroy_sample(avance);
+	al_destroy_sample(apuntado);
 	return retorno;
 }
 #endif

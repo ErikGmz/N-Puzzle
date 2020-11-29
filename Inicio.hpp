@@ -13,7 +13,7 @@ void imprimir_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
     al_draw_filled_rectangle(460, 250, 520, 310, al_map_rgb(255, 255, 255));
     al_draw_filled_rectangle(600, 250, 660, 310, al_map_rgb(255, 255, 255));
 
-    if (contador == 67) {
+    if (contador == 55) {
         if (parpadeo) {
             parpadeo = false;
         }
@@ -30,6 +30,9 @@ void imprimir_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
 bool imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
+    ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+    al_reserve_samples(5);
+
     bool continuar = false, reanudar, parpadeo;
     int contador = 0;
 
@@ -45,12 +48,11 @@ bool imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
         switch (evento.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-
-                al_rest(0.3);
+                al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                al_rest(0.5);
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_flip_display();
-                al_rest(0.3);*/
+                al_rest(0.5);
                 continuar = true;
             }
             break;
@@ -77,6 +79,7 @@ bool imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
     al_destroy_event_queue(fila_evento);
     al_start_timer(temporizador);
     al_destroy_timer(temporizador);
+    al_destroy_sample(avance);
     return true;
 }
 #endif

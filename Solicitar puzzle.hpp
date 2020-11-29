@@ -34,7 +34,7 @@ void mostrar_interfaz(ALLEGRO_FONT* letra, vector<vector<string>> puzzle, int di
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
     if(tipo_puzzle == 1) al_draw_text(letra, al_map_rgb(255, 195, 243), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
-    else al_draw_text(letra, al_map_rgb(166, 226, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
+    else al_draw_text(letra, al_map_rgb(166, 226, 255), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
     string* auxiliar = new string;
     *auxiliar = "POSICIONE EL";
     

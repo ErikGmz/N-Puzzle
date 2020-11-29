@@ -5,35 +5,51 @@
 //-----Funciones-----//.
 //Se determina en cuál ícono se ha posicionado el cursor.
 int posicionado(int x, int y) {
-    if (x >= 200 && x <= 600 && y >= 50 && y <= 110) return 1;
-    else if (x >= 250 && x <= 550 && y >= 170 && y <= 230) return 2;
-    else if (x >= 320 && x <= 481 && y >= 290 && y <= 350) return 3;
+    if (x >= 200 && x <= 600 && y >= 60 && y <= 120) return 1;
+    else if (x >= 250 && x <= 550 && y >= 180 && y <= 240) return 2;
+    else if (x >= 320 && x <= 481 && y >= 300 && y <= 360) return 3;
     else return 4;
 }
 
 //Se imprimen los elementos del menú principal.
-void imprimir_elementos(ALLEGRO_FONT* letra) {
+void imprimir_elementos(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
     al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_filled_rectangle(200, 50, 600, 110, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(250, 170, 550, 230, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(320, 290, 481, 350, al_map_rgb(255, 255, 255));
+    al_draw_filled_rectangle(200, 60, 600, 120, al_map_rgb(255, 255, 255));
+    al_draw_filled_rectangle(250, 180, 550, 240, al_map_rgb(255, 255, 255));
+    al_draw_filled_rectangle(320, 300, 481, 360, al_map_rgb(255, 255, 255));
 
-    al_draw_filled_rectangle(50, 200, 150, 300, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(650, 200, 750, 300, al_map_rgb(255, 255, 255));
-    al_draw_text(letra, al_map_rgb(220, 220, 220), 400, 410, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UNA OPCION");
+    al_draw_filled_rectangle(50, 210, 150, 310, al_map_rgb(255, 255, 255));
+    al_draw_filled_rectangle(650, 210, 750, 310, al_map_rgb(255, 255, 255));
+
+    if (contador == 55) {
+        if (parpadeo) {
+            parpadeo = false;
+        }
+        else {
+            parpadeo = true;
+        }
+        contador = 0;
+    }
+    if (parpadeo) al_draw_text(letra, al_map_rgb(220, 220, 220), 400, 430, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UNA OPCION");
     al_flip_display();
 }
 
 //Se imprime la interfaz del menú principal.
 int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
-    bool continuar = false, reanudar, sonido = false;
-    int x = 0, y = 0, retorno, auxiliar = 4, seleccion = 0;
+    ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
+    ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+    ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+    al_reserve_samples(3);
+
+    bool continuar = false, reanudar, sonido = false, parpadeo;
+    int x = 0, y = 0, retorno, auxiliar = 4, seleccion = 0, contador = 0;
 
     al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
     al_register_event_source(fila_evento, al_get_mouse_event_source());
+    al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
+    al_start_timer(temporizador);
 
-    imprimir_elementos(letra);
     while (!continuar) {
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_evento, &evento);
@@ -47,7 +63,7 @@ int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
             if (auxiliar >= 1 && auxiliar <= 3) {
                 if (!sonido) {
                     sonido = true;
-                    //al_play_sample(opcion, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    al_play_sample(apuntado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 }
             }
             else {
@@ -58,12 +74,12 @@ int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
             if (auxiliar >= 1 && auxiliar <= 3) {
                 retorno = auxiliar;
                 continuar = true;
-                /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
-                al_rest(0.3);
+                al_rest(0.5);
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_flip_display();
-                al_rest(0.3);*/
+                al_rest(0.5);
             }
             break;
         case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
@@ -73,10 +89,13 @@ int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
                 al_wait_for_event(fila_evento, &evento2);
 
                 if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                    imprimir_elementos(letra);
+                    imprimir_elementos(letra, ++contador, parpadeo);
                     reanudar = true;
                 }
             }
+            break;
+        case ALLEGRO_EVENT_TIMER:
+            imprimir_elementos(letra, ++contador, parpadeo);
             break;
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             retorno = 4;
@@ -85,6 +104,10 @@ int imprimir_menu(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
         }
     }
     al_destroy_event_queue(fila_evento);
+    al_start_timer(temporizador);
+    al_destroy_timer(temporizador);
+    al_destroy_sample(avance);
+    al_destroy_sample(apuntado);
     return retorno;
 }
 #endif
