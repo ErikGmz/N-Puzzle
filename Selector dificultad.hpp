@@ -2,21 +2,41 @@
 #ifndef Selector_dificultad_hpp
 #define Selector_dificultad_hpp
 
-//-----Funciones-----//.
-//Se determina en cuál ícono, del menú para la selección de dificultades, se ha posicionado el cursor.
-int posicionado3(int x, int y) {
-	if (x >= 300 && x <= 500 && y >= 150 && y <= 210) return 1;
-	else if (x >= 290 && x <= 510 && y >= 280 && y <= 340) return 2;
-	else if (x >= 280 && x <= 520 && y >= 410 && y <= 470) return 3;
-	else if (x >= 64 && x <= 122 && y >= 409 && y <= 471) return 4;
+//-----Clase 'Dificultad'-----//.
+class Dificultad {
+private:
+	//---Atributos---//.
+	int x, y;
+	ALLEGRO_FONT* letra;
+	ALLEGRO_DISPLAY* pantalla;
+
+	//---Funciones privadas---//.
+	int posicionado(); //Se determina en cuál ícono se ha posicionado el cursor.
+	void imprimir_interfaz(); //Se imprime la interfaz del selector de dificultad.
+public:
+	//---Contructor---//.
+	Dificultad(ALLEGRO_FONT*, ALLEGRO_DISPLAY*); //Constructor con argumentos.
+
+	//---Métodos---//.
+	int generar_selector_dificultad(); //Se genera la pantalla del selector de dificultad.
+};
+
+//-----Métodos de la clase 'Dificultad'-----//.
+//---Funciones privadas---//.
+//Se determina en cuál ícono se ha posicionado el cursor.
+int Dificultad::posicionado() {
+	if (this->x >= 300 && this->x <= 500 && this->y >= 150 && this->y <= 210) return 1;
+	else if (this->x >= 290 && this->x <= 510 && this->y >= 280 && this->y <= 340) return 2;
+	else if (this->x >= 280 && this->x <= 520 && this->y >= 410 && this->y <= 470) return 3;
+	else if (this->x >= 64 && this->x <= 122 && this->y >= 409 && this->y <= 471) return 4;
 	else return 5;
 }
 
-//Se imprimen los elementos de la interfaz.
-void escribir_elementos(ALLEGRO_FONT* fuente) {
+//Se imprime la interfaz del selector de dificultad.
+void Dificultad::imprimir_interfaz() {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 
-	al_draw_text(fuente, al_map_rgb(189, 252, 166), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE LA DIFICULTAD");
+	al_draw_text(this->letra, al_map_rgb(189, 252, 166), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE LA DIFICULTAD");
 
 	al_draw_filled_rectangle(300, 150, 500, 210, al_map_rgb(255, 255, 255));
 	al_draw_filled_rectangle(290, 280, 510, 340, al_map_rgb(255, 255, 255));
@@ -26,20 +46,29 @@ void escribir_elementos(ALLEGRO_FONT* fuente) {
 	al_flip_display();
 }
 
-//Se imprime el selector de dificultad.
-int imprimir_selector(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
+//---Contructor---//.
+//Constructor con argumentos.
+Dificultad::Dificultad(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana) {
+	this->x, this->y = 0;
+	this->letra = formato;
+	this->pantalla = ventana;
+}
+
+//---Métodos---//.
+//Se genera la pantalla del selector de dificultad.
+int Dificultad::generar_selector_dificultad() {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
 	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
 	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
 	al_reserve_samples(3);
 
 	bool continuar = false, reanudar, sonido = false;
-	int x = 0, y = 0, auxiliar = 5, retorno;
+	int auxiliar = 5, retorno;
 
 	al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
 	al_register_event_source(fila_evento, al_get_mouse_event_source());
 
-	escribir_elementos(fuente);
+	this->imprimir_interfaz();
 	while (!continuar) {
 		ALLEGRO_EVENT evento;
 		al_wait_for_event(fila_evento, &evento);
@@ -48,7 +77,7 @@ int imprimir_selector(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			x = evento.mouse.x;
 			y = evento.mouse.y;
-			auxiliar = posicionado3(x, y);
+			auxiliar = this->posicionado();
 
 			if (auxiliar >= 1 && auxiliar <= 4) {
 				if (!sonido) {
@@ -79,7 +108,7 @@ int imprimir_selector(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* fuente) {
 				al_wait_for_event(fila_evento, &evento2);
 
 				if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-					escribir_elementos(fuente);
+					this->imprimir_interfaz();
 					reanudar = true;
 				}
 			}

@@ -8,8 +8,33 @@ bool ordenamiento_descendente(Datos a, Datos b) {
     return (a.puntaje > b.puntaje);
 }
 
+//-----Clase 'Finalizar'-----//.
+class Finalizar {
+private:
+    //---Atributos---//.
+    int contador, tiempo;
+    bool parpadeo;
+    Datos* jugador_actual;
+    ALLEGRO_FONT* letra;
+    ALLEGRO_DISPLAY* pantalla;
+
+    //---Funciones privadas---//.
+    void actualizar_archivo(); //Se actualiza el contenido del registro.
+    char numero_a_caracter(int); //Se retorna un dígito en forma de caracter.
+    char* formato_tiempo(); //Se convierte una cifra en un formato de tiempo.
+    void imprimir_interfaz(); //Se imprime la interfaz del menú de finalización.
+public:
+    //---Contructor---//.
+    Finalizar(ALLEGRO_FONT*, ALLEGRO_DISPLAY*, Datos*, int); //Constructor con argumentos.
+
+    //---Métodos---//.
+    bool generar_fin_partida(); //Se genera el menú de finalización.
+};
+
+//-----Métodos de la clase 'Finalizar'-----//.
+//---Funciones privadas---//.
 //Se actualiza el contenido del registro.
-void actualizar_archivo(Datos* entrada) {
+void Finalizar::actualizar_archivo() {
     fstream archivo("registro.dat", ios::binary | ios::in);
     if (!archivo) {
         archivo.close();
@@ -25,10 +50,10 @@ void actualizar_archivo(Datos* entrada) {
     archivo.read(reinterpret_cast <char*>(aux2), sizeof(Datos_Guardar));
     while (!archivo.eof()) {
         aux1->nombre = aux2->nombre;
-        if (aux1->nombre == entrada->nombre) {
+        if (aux1->nombre == this->jugador_actual->nombre) {
             encontrado = true;
-            aux1->puntaje = entrada->puntaje;
-            aux1->fecha = entrada->fecha;
+            aux1->puntaje = this->jugador_actual->puntaje;
+            aux1->fecha = this->jugador_actual->fecha;
         }
         else {
             aux1->puntaje = aux2->puntaje;
@@ -38,9 +63,9 @@ void actualizar_archivo(Datos* entrada) {
         archivo.read(reinterpret_cast <char*>(aux2), sizeof(Datos_Guardar));
     }
     if (!encontrado) {
-        aux1->nombre = entrada->nombre;
-        aux1->puntaje = entrada->puntaje;
-        aux1->fecha = entrada->fecha;
+        aux1->nombre = this->jugador_actual->nombre;
+        aux1->puntaje = this->jugador_actual->puntaje;
+        aux1->fecha = this->jugador_actual->fecha;
         ordenamiento->push_back(*aux1);
     }
     ordenamiento->sort(ordenamiento_descendente);
@@ -60,7 +85,7 @@ void actualizar_archivo(Datos* entrada) {
 }
 
 //Se retorna un dígito en forma de caracter.
-char numero_a_caracter(int digito) {
+char Finalizar::numero_a_caracter(int digito) {
     switch (digito) {
     case 0: return '0'; break;
     case 1: return '1'; break;
@@ -77,20 +102,21 @@ char numero_a_caracter(int digito) {
 }
 
 //Se convierte una cifra en un formato de tiempo.
-char* formato_tiempo(int tiempo) {
+char* Finalizar::formato_tiempo() {
     string formato;
     int minutos = 0, segundos = 0, horas = 0;
+    int auxiliar = this->tiempo;
 
-    while (tiempo >= 3600) {
+    while (auxiliar >= 3600) {
         horas++;
-        tiempo -= 3600;
+        auxiliar -= 3600;
     }
-    while (tiempo >= 60) {
+    while (auxiliar >= 60) {
         minutos++;
-        tiempo -= 60;
+        auxiliar -= 60;
     }
-    if (tiempo > 0) {
-        segundos += tiempo;
+    if (auxiliar > 0) {
+        segundos += auxiliar;
     }
     if (horas < 10) {
         formato.push_back('0');
@@ -126,42 +152,54 @@ char* formato_tiempo(int tiempo) {
     return retorno;
 }
 
-//Se imprimen los elementos de la interfaz.
-void posicionar_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo, Datos* jugador_actual, int tiempo) {
+//Se imprime la interfaz del menú de finalización.
+void Finalizar::imprimir_interfaz() {
+    this->contador++;
     al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_text(letra, al_map_rgb(255, 192, 201), 400, 50, ALLEGRO_ALIGN_CENTRE, "PARTIDA FINALIZADA");
-    al_draw_text(letra, al_map_rgb(255, 204, 102), 400, 130, ALLEGRO_ALIGN_CENTRE, "EL PUNTAJE DEL JUGADOR");
-    al_draw_text(letra, al_map_rgb(255, 204, 102), 400, 180, ALLEGRO_ALIGN_CENTRE, ((jugador_actual->nombre + " FUE " + to_string(jugador_actual->puntaje)).c_str()));
+    al_draw_text(this->letra, al_map_rgb(255, 192, 201), 400, 50, ALLEGRO_ALIGN_CENTRE, "PARTIDA FINALIZADA");
+    al_draw_text(this->letra, al_map_rgb(255, 204, 102), 400, 130, ALLEGRO_ALIGN_CENTRE, "EL PUNTAJE DEL JUGADOR");
+    al_draw_text(this->letra, al_map_rgb(255, 204, 102), 400, 180, ALLEGRO_ALIGN_CENTRE, ((this->jugador_actual->nombre + " FUE " + to_string(this->jugador_actual->puntaje)).c_str()));
 
-    al_draw_text(letra, al_map_rgb(229, 229, 255), 400, 260, ALLEGRO_ALIGN_CENTRE, "EL TIEMPO UTILIZADO FUE");
-    al_draw_text(letra, al_map_rgb(229, 229, 255), 400, 310, ALLEGRO_ALIGN_CENTRE, formato_tiempo(tiempo));
+    al_draw_text(this->letra, al_map_rgb(229, 229, 255), 400, 260, ALLEGRO_ALIGN_CENTRE, "EL TIEMPO UTILIZADO FUE");
+    al_draw_text(this->letra, al_map_rgb(229, 229, 255), 400, 310, ALLEGRO_ALIGN_CENTRE, this->formato_tiempo());
 
-    if (contador == 55) {
-        if (parpadeo) {
-            parpadeo = false;
+    if (this->contador == 55) {
+        if (this->parpadeo) {
+            this->parpadeo = false;
         }
         else {
-            parpadeo = true;
+            this->parpadeo = true;
         }
-        contador = 0;
+        this->contador = 0;
     }
-    if (parpadeo) al_draw_text(letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
+    if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
 }
 
-//Se imprime la interfaz de finalización de partidas.
-bool imprimir_fin_partida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, Datos* jugador_actual, int tiempo) {
+//---Contructor---//.
+//Constructor con argumentos.
+Finalizar::Finalizar(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana, Datos* jugador, int temporizador) {
+    this->contador = 0;
+    this->parpadeo = true;
+    this->jugador_actual = jugador;
+    this->tiempo = temporizador;
+    this->letra = formato;
+    this->pantalla = ventana;
+}
+
+//---Métodos---//.
+//Se genera el menú de finalización.
+bool Finalizar::generar_fin_partida() {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
     ALLEGRO_SAMPLE* avance1 = al_load_sample("Sounds/smw_message_block.wav");
     al_reserve_samples(5);
 
-    bool continuar = false, reanudar, parpadeo;
-    int contador = 0;
+    bool continuar = false, reanudar;
 
-    actualizar_archivo(jugador_actual);
+    this->actualizar_archivo();
     al_register_event_source(fila_evento, al_get_keyboard_event_source());
-    al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
+    al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
     al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
     al_start_timer(temporizador);
 
@@ -188,13 +226,13 @@ bool imprimir_fin_partida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, Datos*
                 al_wait_for_event(fila_evento, &evento2);
 
                 if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                    posicionar_texto(letra, ++contador, parpadeo, jugador_actual, tiempo);
+                    this->imprimir_interfaz();
                     reanudar = true;
                 }
             }
             break;
         case ALLEGRO_EVENT_TIMER:
-            posicionar_texto(letra, ++contador, parpadeo, jugador_actual, tiempo);
+            this->imprimir_interfaz();
             break;
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             return false;

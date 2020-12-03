@@ -3,16 +3,72 @@
 #define Menú_récords_hpp
 #include "Sistema archivos.hpp"
 
-//-----Funciones-----//.
-//Se determina en cuál ícono, del menú de récords, se ha posicionado el cursor.
-int posicionado2(int x, int y) {
-	if (x >= 65 && x <= 121 && y >= 468 && y <= 525) return 1;
-	else if (x >= 360 && x <= 710 && y >= 468 && y <= 525) return 2;
+//-----Clase 'Menú_récords'-----//.
+class Menu_records {
+private:
+	//---Atributos---//.
+	int x, y;
+	ALLEGRO_DISPLAY* pantalla;
+
+	//---Funciones privadas---//.
+	int posicionado(); //Se determina en cuál ícono se ha posicionado el cursor.
+	void mostrar_registro(ALLEGRO_FONT*); //Se muestran los datos de cada jugador dentro del ranking.
+	void imprimir_interfaz(); //Se imprime la interfaz del menú de récords.
+public:
+	//---Contructor---//.
+	Menu_records(ALLEGRO_DISPLAY*); //Constructor con argumento.
+
+	//---Métodos---//.
+	int menu_records(); //Se genera el menú de récords.
+};
+
+//-----Métodos de la clase 'Menú_récords'-----//.
+//---Funciones privadas---//.
+//Se determina en cuál ícono se ha posicionado el cursor.
+int Menu_records::posicionado() {
+	if (this->x >= 65 && this->x <= 121 && this->y >= 468 && this->y <= 525) return 1;
+	else if (this->x >= 360 && this->x <= 710 && this->y >= 468 && this->y <= 525) return 2;
 	else return 3;
 }
 
-//Se imprimen los elementos de la interfaz.
-void agregar_elementos() {
+//Se muestran los datos de cada jugador dentro del ranking.
+void Menu_records::mostrar_registro(ALLEGRO_FONT* letra) {
+	fstream archivo("registro.dat", ios::binary | ios::in);
+	ALLEGRO_FONT* menor = al_load_font("Fonts/slkscre.ttf", 23, NULL);
+	int contador = 0;
+
+	if (archivo) {
+		Datos_Guardar* aux = new Datos_Guardar;
+
+		archivo.read(reinterpret_cast <char*>(aux), sizeof(Datos_Guardar));
+		while (!archivo.eof()) {
+			if (contador < 7) {
+				al_draw_text(menor, al_map_rgb(230, 197, 252), 263, 125 + contador * 45, ALLEGRO_ALIGN_CENTRE, aux->nombre);
+				al_draw_text(letra, al_map_rgb(202, 255, 175), 460, 123 + contador * 45, ALLEGRO_ALIGN_CENTRE, to_string(aux->puntaje).c_str());
+				al_draw_text(menor, al_map_rgb(255, 197, 168), 657, 127 + contador* 45, ALLEGRO_ALIGN_CENTRE, aux->fecha);
+				contador++;
+			}
+			else {
+				break;
+			}
+			archivo.read(reinterpret_cast <char*>(aux), sizeof(Datos_Guardar));
+		}
+		delete aux;
+	}
+	if (contador < 7) {
+		for (int i = contador; i < 7; i++) {
+			al_draw_text(letra, al_map_rgb(230, 197, 252), 263, 125 + i * 45, ALLEGRO_ALIGN_CENTRE, "-----");
+			al_draw_text(letra, al_map_rgb(202, 255, 175), 460, 123 + i * 45, ALLEGRO_ALIGN_CENTRE, "-----");
+			al_draw_text(letra, al_map_rgb(255, 197, 168), 657, 127 + i * 45, ALLEGRO_ALIGN_CENTRE, "-----");
+		}
+	}
+
+	archivo.close();
+	al_destroy_font(menor);
+}
+
+//Se imprime la interfaz del menú de récords.
+void Menu_records::imprimir_interfaz() {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 
 	ALLEGRO_FONT* titulo = al_load_font("Fonts/slkscre.ttf", 35, NULL);
@@ -27,7 +83,7 @@ void agregar_elementos() {
 	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 305, ALLEGRO_ALIGN_CENTRE, "5.-");
 	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 350, ALLEGRO_ALIGN_CENTRE, "6.-");
 	al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 395, ALLEGRO_ALIGN_CENTRE, "7.-");
-	mostrar_registro(letra);
+	this->mostrar_registro(letra);
 
 	al_draw_filled_rectangle(65, 458, 121, 515, al_map_rgb(255, 255, 255));
 	al_draw_filled_rectangle(360, 458, 710, 515, al_map_rgb(255, 255, 255));
@@ -36,20 +92,28 @@ void agregar_elementos() {
 	al_destroy_font(titulo); al_destroy_font(letra);
 }
 
-//Se imprime la tabla de los récords.
-int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
+//---Contructor---//.
+//Constructor con argumentos.
+Menu_records::Menu_records(ALLEGRO_DISPLAY* ventana) {
+    this->x, this->y = 0;
+    this->pantalla = ventana;
+}
+
+//---Métodos---//.
+//Se genera el menú principal.
+int Menu_records::menu_records() {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
 	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
 	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
 	al_reserve_samples(3);
 
 	bool continuar = false, reanudar, sonido = false;
-	int x = 0, y = 0, auxiliar = 3, retorno;
+	int auxiliar = 3, retorno;
 
-	al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
+	al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
 	al_register_event_source(fila_evento, al_get_mouse_event_source());
 
-	agregar_elementos();
+	this->imprimir_interfaz();
 	while (!continuar) {
 		ALLEGRO_EVENT evento;
 		al_wait_for_event(fila_evento, &evento);
@@ -58,7 +122,7 @@ int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			x = evento.mouse.x;
 			y = evento.mouse.y;
-			auxiliar = posicionado2(x, y);
+			auxiliar = this->posicionado();
 
 			if (auxiliar >= 1 && auxiliar <= 2) {
 				if (!sonido) {
@@ -89,7 +153,7 @@ int imprimir_records(ALLEGRO_DISPLAY* pantalla) {
 				al_wait_for_event(fila_evento, &evento2);
 
 				if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-					agregar_elementos();
+					this->imprimir_interfaz();
 					reanudar = true;
 				}
 			}

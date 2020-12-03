@@ -38,9 +38,6 @@
     <ClInclude Include="Menú récords.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sistema archivos.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Selector dificultad.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

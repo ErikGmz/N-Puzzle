@@ -2,54 +2,46 @@
 #ifndef Juego_manual_hpp
 #define Juego_manual_hpp
 
-//-----Funciones-----//.
-//Se verifica si el cursor se ha posicionado sobre alguna ficha a desplazar.
-int posicionado6(int x, int y) {
-	if (x >= 470 && x <= 750 && y >= 440 && y <= 500) return 1;
+//-----Clase 'Manual'-----//.
+class Manual {
+private:
+	//---Atributos---//.
+	int x, y, dificultad, tiempo;
+	ALLEGRO_DISPLAY* pantalla;
+	Datos* jugador_actual;
+	vector<vector<string>> puzzle_inicio, puzzle_final;
+
+	//---Funciones privadas---//.
+	int posicionado(); //Se determina en cuál ícono se ha posicionado el cursor.
+	int generar_numero_aleatorio(); //Se genera un valor aleatorio según la dificultad de la partida. 
+	vector<vector<string>> generar_inicio(); //Se genera el puzzle inicial de forma aleatoria.
+	vector<vector<string>> generar_meta(); //Se genera el puzzle meta de forma aleatoria.
+	char numero_a_caracter(int); //Se retorna un dígito en forma de caracter.
+	char* formato_tiempo(); //Se convierte una cifra en un formato de tiempo.
+	void imprimir_interfaz(); //Se imprime la interfaz de la partida manual.
+public:
+	//---Contructor---//.
+	Manual(ALLEGRO_DISPLAY*, Datos*, int); //Constructor con argumentos.
+
+	//Getters.
+	inline Datos datos_actuales() { return *jugador_actual; }
+	inline int tiempo_ocupado() { return tiempo; }
+
+	//---Métodos---//.
+	void generar_partida(); //Se genera la pantalla de la partida manual.
+};
+
+//-----Métodos de la clase 'Manual'-----//.
+//---Funciones privadas---//.
+//Se verifica si el cursor se ha posicionado sobre alguna ficha a desplazar o algún ícono.
+int Manual::posicionado() {
+	if (this->x >= 470 && this->x <= 750 && this->y >= 440 && this->y <= 500) return 1;
 	return 2;
 }
 
-//Se imprimen los elementos de la interfaz.
-void interfaz_manual(Datos* jugador_actual, int dificultad, int& tiempo, vector<vector<string>> puzzle_inicio, vector<vector<string>> puzzle_meta) {
-	string* auxiliar = new string;
-	ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 32, NULL);
-
-	switch (dificultad) {
-	case 3: *auxiliar = "FACIL"; break;
-	case 4: *auxiliar = "NORMAL"; break;
-	case 5: *auxiliar = "DIFICIL"; break;
-	}
-
-	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(letra, al_map_rgb(250, 201, 136), 425, 20, ALLEGRO_ALIGN_CENTRE, "DIFICULTAD");
-	al_draw_text(letra, al_map_rgb(252, 252, 164), 425, 60, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
-	al_draw_text(letra, al_map_rgb(179, 189, 250), 150, 20, ALLEGRO_ALIGN_CENTRE, "JUGADOR");
-	al_draw_text(letra, al_map_rgb(233, 188, 255), 150, 60, ALLEGRO_ALIGN_CENTRE, jugador_actual->nombre.c_str());
-	al_draw_text(letra, al_map_rgb(140, 252, 185), 670, 20, ALLEGRO_ALIGN_CENTRE, "TIEMPO");
-	al_draw_text(letra, al_map_rgb(197, 255, 180), 670, 60, ALLEGRO_ALIGN_CENTRE, formato_tiempo(tiempo));
-	delete auxiliar;
-	
-	switch (dificultad) {
-	case 3: al_draw_filled_rectangle(200, 200, 353, 353, al_map_rgb(255, 255, 255)); break;
-	case 4: al_draw_filled_rectangle(200, 200, 403, 403, al_map_rgb(255, 255, 255)); break;
-	case 5: al_draw_filled_rectangle(200, 200, 453, 453, al_map_rgb(255, 255, 255)); break;
-	}
-
-	al_draw_filled_rectangle(50, 440, 280, 500, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(470, 440, 750, 500, al_map_rgb(255, 255, 255));
-
-	for (int i = 0; i < dificultad; i++) {
-		for (int j = 0; j < dificultad; j++) {
-			al_draw_filled_rectangle(200 + i * 50 + 3, 200 + j * 50 + 3, 200 + (i + 1) * 50, 200 + (j + 1) * 50, al_map_rgb(25, 177, 201));
-		}
-	}
-	al_flip_display();
-	al_destroy_font(letra);
-}
-
 //Se genera un valor aleatorio según la dificultad de la partida.
-int generar_numero_aleatorio(int dificultad) {
-	switch (dificultad) {
+int Manual::generar_numero_aleatorio() {
+	switch (this->dificultad) {
 	case 3:
 		return (rand() % 9); break;
 	case 4:
@@ -62,18 +54,18 @@ int generar_numero_aleatorio(int dificultad) {
 }
 
 //Se genera el puzzle inicial de forma aleatoria.
-vector<vector<string>> generar_puzzle(int dificultad) {
-	vector<vector<string>> auxiliar(dificultad, vector<string>(dificultad, ""));
+vector<vector<string>> Manual::generar_inicio() {
+	vector<vector<string>> auxiliar(this->dificultad, vector<string>(this->dificultad, ""));
 	string* random;
 	int contador_y = 0, contador_x = 0;
 
 	do {
 		bool valor_repetido = false;
 		random = new string;
-		*random = to_string(generar_numero_aleatorio(dificultad));
+		*random = to_string(this->generar_numero_aleatorio());
 
-		for (int i = 0; i < dificultad; i++) {
-			for (int j = 0; j < dificultad; j++) {
+		for (int i = 0; i < this->dificultad; i++) {
+			for (int j = 0; j < this->dificultad; j++) {
 				if (!(i == contador_x && j == contador_y)) {
 					if (*random == auxiliar[i][j]) {
 						valor_repetido = true;
@@ -81,35 +73,25 @@ vector<vector<string>> generar_puzzle(int dificultad) {
 				}
 				if (valor_repetido) {
 					i = 0; j = 0;
-					*random = to_string(generar_numero_aleatorio(dificultad));
+					*random = to_string(this->generar_numero_aleatorio());
 					valor_repetido = false;
 				}
 			}
 		}
 
 		auxiliar[contador_x][contador_y++] = *random;
-		if (contador_y == dificultad) {
+		if (contador_y == this->dificultad) {
 			contador_y = 0;
 			contador_x++;
 		}
 		delete random;
-	} while (contador_y < dificultad - 1 && contador_x < dificultad - 1);
+	} while (contador_y < this->dificultad - 1 && contador_x < this->dificultad - 1);
 	return auxiliar;
 }
 
-//Se verifica si el puzzle meta es igual que el de inicio.
-bool puzzles_iguales(vector<vector<string>> puzzle_inicio, vector<vector<string>> puzzle_meta, int dificultad) {
-	for (int i = 0; i < dificultad; i++) {
-		for (int j = 0; j < dificultad; j++) {
-			if (puzzle_inicio[i][j] != puzzle_meta[i][j]) return false;
-		}
-	}
-	return true;
-}
-
 //Se genera el puzzle meta de forma aleatoria.
-vector<vector<string>> generar_puzzle_meta(vector<vector<string>> puzzle_inicio, int dificultad) {
-	vector<vector<string>> auxiliar(dificultad, vector<string>(dificultad, ""));
+vector<vector<string>> Manual::generar_meta() {
+	vector<vector<string>> auxiliar(this->dificultad, vector<string>(this->dificultad, ""));
 	string* random;
 	int contador_y = 0, contador_x = 0;
 
@@ -117,10 +99,10 @@ vector<vector<string>> generar_puzzle_meta(vector<vector<string>> puzzle_inicio,
 		do {
 			bool valor_repetido = false;
 			random = new string;
-			*random = to_string(generar_numero_aleatorio(dificultad));
+			*random = to_string(this->generar_numero_aleatorio());
 
-			for (int i = 0; i < dificultad; i++) {
-				for (int j = 0; j < dificultad; j++) {
+			for (int i = 0; i < this->dificultad; i++) {
+				for (int j = 0; j < this->dificultad; j++) {
 					if (!(i == contador_x && j == contador_y)) {
 						if (*random == auxiliar[i][j]) {
 							valor_repetido = true;
@@ -128,27 +110,146 @@ vector<vector<string>> generar_puzzle_meta(vector<vector<string>> puzzle_inicio,
 					}
 					if (valor_repetido) {
 						i = 0; j = 0;
-						*random = to_string(generar_numero_aleatorio(dificultad));
+						*random = to_string(this->generar_numero_aleatorio());
 						valor_repetido = false;
 					}
 				}
 			}
 
 			auxiliar[contador_x][contador_y++] = *random;
-			if (contador_y == dificultad) {
+			if (contador_y == this->dificultad) {
 				contador_y = 0;
 				contador_x++;
 			}
 			delete random;
 			valor_repetido = false;
-		} while (contador_y < dificultad - 1 && contador_x < dificultad - 1);
-	} while (puzzles_iguales(puzzle_inicio, auxiliar, dificultad));
+		} while (contador_y < this->dificultad - 1 && contador_x < this->dificultad - 1);
+	} while (this->puzzle_inicio == this->puzzle_final);
 	return auxiliar;
 }
 
+//Se retorna un dígito en forma de caracter.
+char Manual::numero_a_caracter(int digito) {
+	switch (digito) {
+	case 0: return '0'; break;
+	case 1: return '1'; break;
+	case 2: return '2'; break;
+	case 3: return '3'; break;
+	case 4: return '4'; break;
+	case 5: return '5'; break;
+	case 6: return '6'; break;
+	case 7: return '7'; break;
+	case 8: return '8'; break;
+	case 9: return '9'; break;
+	default: return 'a'; break;
+	}
+}
 
-//Se efectúa la partida manual.
-void empezar_juego_manual(ALLEGRO_DISPLAY* pantalla, Datos* jugador_actual, int dificultad, int &tiempo) {
+//Se convierte una cifra en un formato de tiempo.
+char* Manual::formato_tiempo() {
+	string formato;
+	int minutos = 0, segundos = 0, horas = 0;
+	int auxiliar = this->tiempo;
+
+	while (auxiliar >= 3600) {
+		horas++;
+		auxiliar -= 3600;
+	}
+	while (auxiliar >= 60) {
+		minutos++;
+		auxiliar -= 60;
+	}
+	if (auxiliar > 0) {
+		segundos += auxiliar;
+	}
+	if (horas < 10) {
+		formato.push_back('0');
+		formato.push_back(numero_a_caracter(horas));
+	}
+	else {
+		formato.push_back(numero_a_caracter(horas / 10));
+		formato.push_back(numero_a_caracter(horas % 10));
+	}
+	formato.push_back(':');
+
+	if (minutos < 10) {
+		formato.push_back('0');
+		formato.push_back(numero_a_caracter(minutos));
+	}
+	else {
+		formato.push_back(numero_a_caracter(minutos / 10));
+		formato.push_back(numero_a_caracter(minutos % 10));
+	}
+	formato.push_back(':');
+
+	if (segundos < 10) {
+		formato.push_back('0');
+		formato.push_back(numero_a_caracter(segundos));
+	}
+	else {
+		formato.push_back(numero_a_caracter(segundos / 10));
+		formato.push_back(numero_a_caracter(segundos % 10));
+	}
+
+	char* retorno = new char[10];
+	strcpy_s(retorno, 10, formato.c_str());
+	return retorno;
+}
+
+//Se imprime la interfaz de la partida manual.
+void Manual::imprimir_interfaz() {
+	this->tiempo++;
+	string* auxiliar = new string;
+	ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 32, NULL);
+
+	switch (this->dificultad) {
+	case 3: *auxiliar = "FACIL"; break;
+	case 4: *auxiliar = "NORMAL"; break;
+	case 5: *auxiliar = "DIFICIL"; break;
+	}
+
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_text(letra, al_map_rgb(250, 201, 136), 425, 20, ALLEGRO_ALIGN_CENTRE, "DIFICULTAD");
+	al_draw_text(letra, al_map_rgb(252, 252, 164), 425, 60, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
+	al_draw_text(letra, al_map_rgb(179, 189, 250), 150, 20, ALLEGRO_ALIGN_CENTRE, "JUGADOR");
+	al_draw_text(letra, al_map_rgb(233, 188, 255), 150, 60, ALLEGRO_ALIGN_CENTRE, this->jugador_actual->nombre.c_str());
+	al_draw_text(letra, al_map_rgb(140, 252, 185), 670, 20, ALLEGRO_ALIGN_CENTRE, "TIEMPO");
+	al_draw_text(letra, al_map_rgb(197, 255, 180), 670, 60, ALLEGRO_ALIGN_CENTRE, this->formato_tiempo());
+	delete auxiliar;
+
+	switch (this->dificultad) {
+	case 3: al_draw_filled_rectangle(200, 200, 353, 353, al_map_rgb(255, 255, 255)); break;
+	case 4: al_draw_filled_rectangle(200, 200, 403, 403, al_map_rgb(255, 255, 255)); break;
+	case 5: al_draw_filled_rectangle(200, 200, 453, 453, al_map_rgb(255, 255, 255)); break;
+	}
+
+	al_draw_filled_rectangle(50, 440, 280, 500, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(470, 440, 750, 500, al_map_rgb(255, 255, 255));
+
+	for (int i = 0; i < this->dificultad; i++) {
+		for (int j = 0; j < this->dificultad; j++) {
+			al_draw_filled_rectangle(200 + i * 50 + 3, 200 + j * 50 + 3, 200 + (i + 1) * 50, 200 + (j + 1) * 50, al_map_rgb(25, 177, 201));
+		}
+	}
+	al_flip_display();
+	al_destroy_font(letra);
+}
+
+//---Contructor---//.
+//Constructor con argumentos.
+Manual::Manual(ALLEGRO_DISPLAY* ventana, Datos *jugador, int dificul) {
+	this->x = this->y = 0;
+	this->tiempo = -1;
+	this->dificultad = dificul;
+	this->pantalla = ventana;
+	this->jugador_actual = jugador;
+	this->puzzle_inicio = this->generar_inicio();
+	this->puzzle_final = this->generar_meta();
+}
+
+//---Métodos---//.
+//Se genera la pantalla de la partida manual.
+void Manual::generar_partida() {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
 	ALLEGRO_TIMER* temporizador = al_create_timer(1);
 	ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
@@ -156,17 +257,14 @@ void empezar_juego_manual(ALLEGRO_DISPLAY* pantalla, Datos* jugador_actual, int 
 	al_reserve_samples(3);
 
 	bool continuar = false, reanudar, sonido = false;
-	int x = 0, y = 0, auxiliar = 2, veces_ayuda = 0;
+	int auxiliar = 2, veces_ayuda = 0;
 
-	vector<vector<string>> puzzle_inicio = generar_puzzle(dificultad);
-	vector<vector<string>> puzzle_meta = generar_puzzle_meta(puzzle_inicio, dificultad);
-
-	al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
+	al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
 	al_register_event_source(fila_evento, al_get_mouse_event_source());
 	al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
 	al_start_timer(temporizador);
 
-	interfaz_manual(jugador_actual, dificultad, tiempo, puzzle_inicio, puzzle_meta);
+	this->imprimir_interfaz();
 	while (!continuar) {
 		ALLEGRO_EVENT evento;
 		al_wait_for_event(fila_evento, &evento);
@@ -175,7 +273,7 @@ void empezar_juego_manual(ALLEGRO_DISPLAY* pantalla, Datos* jugador_actual, int 
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			x = evento.mouse.x;
 			y = evento.mouse.y;
-			auxiliar = posicionado6(x, y);
+			auxiliar = this->posicionado();
 
 			if (auxiliar == 1) {
 				if (!sonido) {
@@ -205,13 +303,13 @@ void empezar_juego_manual(ALLEGRO_DISPLAY* pantalla, Datos* jugador_actual, int 
 				al_wait_for_event(fila_evento, &evento2);
 
 				if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-					interfaz_manual(jugador_actual, dificultad, tiempo, puzzle_inicio, puzzle_meta);
+					this->imprimir_interfaz();
 					reanudar = true;
 				}
 			}
 			break;
 		case ALLEGRO_EVENT_TIMER:
-			interfaz_manual(jugador_actual, dificultad, ++tiempo, puzzle_inicio, puzzle_meta);
+			this->imprimir_interfaz();
 			break;
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			jugador_actual->puntaje = -1;
@@ -220,7 +318,7 @@ void empezar_juego_manual(ALLEGRO_DISPLAY* pantalla, Datos* jugador_actual, int 
 		}
 	}
 	al_destroy_event_queue(fila_evento);
-	
+
 	switch (dificultad) {
 	case 3:
 		if (tiempo < 60) {

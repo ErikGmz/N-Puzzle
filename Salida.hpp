@@ -2,34 +2,64 @@
 #ifndef Salida_hpp
 #define Salida_hpp
 
-//-----Funciones-----//.
-//Se imprimen los elementos de la interfaz.
-void escribir_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_text(letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "GRACIAS POR JUGAR :)");
+//-----Clase 'Salir'-----//.
+class Salir {
+private:
+    //---Atributos---//.
+    int contador;
+    bool parpadeo;
+    ALLEGRO_FONT* letra;
+    ALLEGRO_DISPLAY* pantalla;
 
-    if (contador == 55) {
-        if (parpadeo) {
-            parpadeo = false;
+    //---Funciones privadas---//.
+    void imprimir_interfaz(); //Se imprime la interfaz de la pantalla de salida.
+public:
+    //---Contructor---//.
+    Salir(ALLEGRO_FONT*, ALLEGRO_DISPLAY*); //Constructor con argumentos.
+
+    //---Métodos---//.
+    void generar_salida(); //Se genera la pantalla de salida.
+};
+
+//-----Métodos de la clase 'Salir'-----//.
+//---Funciones privadas---//.
+//Se imprime la interfaz de la pantalla de salida.
+void Salir::imprimir_interfaz() {
+    this->contador++;
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "GRACIAS POR JUGAR :)");
+
+    if (this->contador == 55) {
+        if (this->parpadeo) {
+            this->parpadeo = false;
         }
         else {
-            parpadeo = true;
+            this->parpadeo = true;
         }
-        contador = 0;
+        this->contador = 0;
     }
-    if (parpadeo) al_draw_text(letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
+    if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
 }
 
-//Se imprime la interfaz para finalizar la ejecución del programa.
-void imprimir_salida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
+//---Contructor---//.
+//Constructor con argumentos.
+Salir::Salir(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana) {
+    this->contador = 0;
+    this->parpadeo = true;
+    this->letra = formato;
+    this->pantalla = ventana;
+}
+
+//---Métodos---//.
+//Se genera la pantalla de salida.
+void Salir::generar_salida() {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
     ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
     al_reserve_samples(5);
 
-    bool continuar = false, reanudar, parpadeo;
-    int contador = 0;
+    bool continuar = false, reanudar;
 
     al_register_event_source(fila_evento, al_get_keyboard_event_source());
     al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
@@ -59,13 +89,13 @@ void imprimir_salida(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
                 al_wait_for_event(fila_evento, &evento2);
 
                 if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                    escribir_texto(letra, ++contador, parpadeo);
+                    this->imprimir_interfaz();
                     reanudar = true;
                 }
             }
             break;
         case ALLEGRO_EVENT_TIMER:
-            escribir_texto(letra, ++contador, parpadeo);
+            this->imprimir_interfaz();
             break;
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             continuar = true;

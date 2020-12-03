@@ -8,7 +8,6 @@
 #include "Menú.hpp"
 #include "Nombres.hpp"
 #include "Menú récords.hpp"
-#include "Sistema archivos.hpp"
 #include "Selector dificultad.hpp"
 #include "Selector modo.hpp"
 #include "Confirmar eliminación.hpp"
@@ -32,6 +31,12 @@ int main() {
     al_set_window_position(pantalla, 200, 100);
     al_set_window_title(pantalla, "N-Puzzle");
 
+    Inicio* programa; Menu* principal; Menu_nombres* sistema;
+    Dificultad* solicitud; Modo* seleccion; Manual* juego;
+    Finalizar* partida; Solicitud* puzzle; Fin* demostracion;
+    Menu_records* lista; Confirmar* eliminacion; Eliminar* registro;
+    Salir* ejecucion;
+
     int tiempo, dificultad;
     Datos* jugador;
     bool cancelado = false, repetir, repetir2, repetir3;
@@ -41,24 +46,30 @@ int main() {
     char* auxiliar;
 
     do {
+        programa = new Inicio(titulo, pantalla);
         tiempo = 0;
         jugador = new Datos;
         al_play_sample(musica, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
-        if (imprimir_titulo(pantalla, titulo)) {
-
+        if (programa->pantalla_titulo()) {
             do {
+                principal = new Menu(titulo, pantalla);
+
                 repetir3 = false;
-                switch (imprimir_menu(pantalla, titulo)) {
+                switch (principal->generar_menu()) {
                 case 1:
-
                     do {
-                        repetir = false;
-                        jugador->nombre = solicitar_nombre(pantalla, titulo);
-                        if (jugador->nombre != "-") {
+                        sistema = new Menu_nombres(titulo, pantalla);
 
+                        repetir = false;
+                        jugador->nombre = sistema->generar_solicitud();
+                        delete sistema;
+                        if (jugador->nombre != "-") {
                             do {
+                                solicitud = new Dificultad(titulo, pantalla);
+
                                 repetir2 = false;
-                                dificultad = imprimir_selector(pantalla, titulo);
+                                dificultad = solicitud->generar_selector_dificultad();
+                                delete solicitud;
 
                                 if (dificultad == 4) {
                                     repetir = true;
@@ -67,9 +78,17 @@ int main() {
                                     cancelado = true;
                                 }
                                 else {
-                                    switch (imprimir_modos(pantalla, titulo)) {
+                                    seleccion = new Modo(titulo, pantalla);
+
+                                    switch (seleccion->generar_selector_modo()) {
                                     case 1:
-                                        empezar_juego_manual(pantalla, jugador, dificultad + 2, tiempo);
+                                        juego = new Manual(pantalla, jugador, dificultad + 2);
+                                        juego->generar_partida();
+
+                                        jugador->puntaje = juego->datos_actuales().puntaje;
+                                        tiempo = juego->tiempo_ocupado();
+                                        delete juego;
+
                                         if (jugador->puntaje == -1) {
                                             cancelado = true;
                                         }
@@ -81,27 +100,38 @@ int main() {
                                             jugador->fecha = auxiliar;
                                             delete auxiliar;
 
-                                            if (!imprimir_fin_partida(pantalla, titulo, jugador, tiempo)) {
+                                            partida = new Finalizar(titulo, pantalla, jugador, tiempo);
+
+                                            if (!partida->generar_fin_partida()) {
                                                 cancelado = true;
                                             }
                                             else {
                                                 repetir3 = true;
                                             }
+                                            delete partida;
                                         }
                                         break;
                                     case 2:
-                                        *puzzle_inicio = solicitar_puzzle(pantalla, titulo, dificultad + 2, 1);
+                                        puzzle = new Solicitud(titulo, pantalla, dificultad + 2, 1);
+                                        *puzzle_inicio = puzzle->generar_solicitud();
+                                        delete puzzle;
+
                                         if (puzzle_inicio[0][0][0] == "c") {
                                             cancelado = true;
                                         }
                                         else {
-                                            *puzzle_meta = solicitar_puzzle(pantalla, titulo, dificultad + 2, 2);
+                                            puzzle = new Solicitud(titulo, pantalla, dificultad + 2, 2);
+                                            *puzzle_meta = puzzle->generar_solicitud();
+                                            delete puzzle;
+
                                             if (puzzle_meta[0][0][0] == "c") {
                                                 cancelado = true;
                                             }
                                             else {
-                                                imprimir_fin_demostracion(pantalla, titulo);
+                                                demostracion = new Fin(titulo, pantalla);
+                                                demostracion->generar_fin();
                                                 repetir3 = true;
+                                                delete demostracion;
                                             }
                                         }
                                         break;
@@ -112,6 +142,7 @@ int main() {
                                         cancelado = true;
                                         break;
                                     }
+                                    delete seleccion;
                                 }
                             } while (repetir2 && !cancelado);
                         }
@@ -122,48 +153,61 @@ int main() {
                     break;
                 case 2:
                     do {
+                        lista = new Menu_records(pantalla);
+
                         repetir = false;
-                        switch (imprimir_records(pantalla)) {
+                        switch (lista->menu_records()) {
                         case 1:
                             repetir3 = true;
                             break;
                         case 2:
-                            switch (imprimir_confirmacion(pantalla, titulo)) {
+                            eliminacion = new Confirmar(titulo, pantalla);
+
+                            switch (eliminacion->pantalla_confirmacion()) {
                             case 1:
                                 repetir = true;
                                 break;
                             case 2:
-                                if (!imprimir_eliminacion(pantalla, titulo)) {
+                                registro = new Eliminar(titulo, pantalla);
+
+                                if (registro->generar_eliminacion()) {
                                     cancelado = true;
                                 }
                                 else {
                                     repetir = true;
                                 }
+                                delete registro;
                                 break;
                             case 3: default:
                                 cancelado = true;
                                 break;
                             }
+                            delete eliminacion;
                             break;
                         case 3: default:
                             cancelado = true;
                             break;
                         }
+                        delete lista;
                     } while (repetir && !cancelado);
                     break;
                 case 3:
-                    imprimir_salida(pantalla, titulo);
+                    ejecucion = new Salir(titulo, pantalla);
+                    ejecucion->generar_salida();
+                    delete ejecucion;
                     cancelado = true;
                     break;
                 case 4: default:
                     cancelado = true;
                     break;
                 }
+                delete principal;
             } while (repetir3 && !cancelado);
         }
         else {
             cancelado = true;
         }
+        delete programa;
         delete jugador;
     } while (!cancelado);
 

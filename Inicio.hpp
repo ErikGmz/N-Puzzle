@@ -2,9 +2,30 @@
 #ifndef Inicio_hpp
 #define Inicio_hpp
 
-//-----Funciones-----//.
-//Se imprimen los elementos de la interfaz.
-void imprimir_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
+//-----Clase 'Inicio'-----//.
+class Inicio {
+private:
+    //---Atributos---//.
+    int contador;
+    bool parpadeo;
+    ALLEGRO_FONT* letra;
+    ALLEGRO_DISPLAY* pantalla;
+
+    //---Funciones privadas---//.
+    void imprimir_interfaz(); //Se imprime la interfaz de la pantalla de título.
+public:
+    //---Contructor---//.
+    Inicio(ALLEGRO_FONT*, ALLEGRO_DISPLAY*); //Constructor con argumentos.
+
+    //---Métodos---//.
+    bool pantalla_titulo(); //Se genera la pantalla de título.
+};
+
+//-----Métodos de la clase 'Inicio'-----//.
+//---Funciones privadas---//.
+//Se imprime la interfaz de la pantalla de título.
+void Inicio::imprimir_interfaz() {
+    this->contador++;
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_draw_filled_rectangle(100, 50, 700, 170, al_map_rgb(255, 255, 255));
 
@@ -13,31 +34,40 @@ void imprimir_texto(ALLEGRO_FONT* letra, int& contador, bool& parpadeo) {
     al_draw_filled_rectangle(460, 250, 520, 310, al_map_rgb(255, 255, 255));
     al_draw_filled_rectangle(600, 250, 660, 310, al_map_rgb(255, 255, 255));
 
-    if (contador == 55) {
-        if (parpadeo) {
-            parpadeo = false;
+    if (this->contador == 55) {
+        if (this->parpadeo) {
+            this->parpadeo = false;
         }
         else {
-            parpadeo = true;
+            this->parpadeo = true;
         }
-        contador = 0;
+        this->contador = 0;
     }
-    if (parpadeo) al_draw_text(letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
+    if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
 }
 
+//---Contructor---//.
+//Constructor con argumentos.
+Inicio::Inicio(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana) {
+    this->contador = 0;
+    this->parpadeo = true;
+    this->letra = formato;
+    this->pantalla = ventana;
+}
+
+//---Métodos---//.
 //Se imprime la interfaz para la pantalla de título.
-bool imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
+bool Inicio::pantalla_titulo() {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
     ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
     ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
     al_reserve_samples(5);
 
-    bool continuar = false, reanudar, parpadeo;
-    int contador = 0;
+    bool continuar = false, reanudar;
 
     al_register_event_source(fila_evento, al_get_keyboard_event_source());
-    al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
+    al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
     al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
     al_start_timer(temporizador);
 
@@ -63,13 +93,13 @@ bool imprimir_titulo(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
                 al_wait_for_event(fila_evento, &evento2);
 
                 if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                    imprimir_texto(letra, ++contador, parpadeo);
+                    this->imprimir_interfaz();
                     reanudar = true;
                 }
             }
             break;
         case ALLEGRO_EVENT_TIMER:
-            imprimir_texto(letra, ++contador, parpadeo);
+            this->imprimir_interfaz();
             break;
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             return false;

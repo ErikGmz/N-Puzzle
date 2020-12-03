@@ -180,7 +180,6 @@
     <ClInclude Include="Salida.hpp" />
     <ClInclude Include="Selector dificultad.hpp" />
     <ClInclude Include="Selector modo.hpp" />
-    <ClInclude Include="Sistema archivos.hpp" />
     <ClInclude Include="Solicitar puzzle.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

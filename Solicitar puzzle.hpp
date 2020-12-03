@@ -2,25 +2,49 @@
 #ifndef Solicitar_puzzle_hpp
 #define Solicitar_puzzle_hpp
 
-//-----Funciones-----//.
+//-----Clase 'Solicitud'-----//.
+class Solicitud {
+private:
+    //---Atributos---//.
+    int x, y, contador;
+    int dificultad, tipo_puzzle;
+    vector<vector<string>>* puzzle;
+    ALLEGRO_FONT* letra;
+    ALLEGRO_DISPLAY* pantalla;
+
+    //---Funciones privadas---//.
+    bool entrada_valida(int, int); //Se verifica si la entrada actual es repetida/válida o no.
+    void imprimir_interfaz(int, int, int); //Se imprime la interfaz para la solicitud.
+    char validar_entrada(ALLEGRO_EVENT); //Se verifica que el caracter ingresado sea numérico.
+public:
+    //---Contructor---//.
+    Solicitud(ALLEGRO_FONT*, ALLEGRO_DISPLAY*, int, int); //Constructor con argumentos.
+
+    //---Métodos---//.
+    vector<vector<string>> generar_solicitud(); //Se genera el menú para la solicitud del puzzle.
+};
+
+//-----Métodos de la clase 'Solicitud'-----//.
+//-----Funciones privadas-----//.
 //Se verifica si la entrada actual es repetida/válida o no.
-bool entrada_valida(vector<vector<string>> puzzle, int dificultad, int fila, int columna) {
+bool Solicitud::entrada_valida(int fila, int columna) {
     int limite;
 
-    switch (dificultad) {
+    switch (this->dificultad) {
     case 3: limite = 9; break;
     case 4: limite = 16; break;
     case 5: limite = 25; break;
     }
-    int auxiliar = stoi(puzzle[fila][columna]);
+
+    int auxiliar = stoi(this->puzzle[0][fila][columna]);
     if (auxiliar > limite || auxiliar < 1) {
         return false;
     }
 
-    for (int i = 0; i < dificultad; i++) {
-        for (int j = 0; j < dificultad; j++) {
+    for (int i = 0; i < this->dificultad; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
             if (!(i == fila && j == columna)) {
-                if (puzzle[i][j] == puzzle[fila][columna]) {
+                if (this->puzzle[0][i][j] == this->puzzle[0][fila][columna]) {
                     return false;
                 }
             }
@@ -30,15 +54,15 @@ bool entrada_valida(vector<vector<string>> puzzle, int dificultad, int fila, int
 }
 
 //Se imprimen los elementos para la solicitud del puzzle.
-void mostrar_interfaz(ALLEGRO_FONT* letra, vector<vector<string>> puzzle, int dificultad, int contador, int fila, int columna, int tipo_puzzle) {
+void Solicitud::imprimir_interfaz(int fila, int columna, int tipo_puzzle) {
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
-    if(tipo_puzzle == 1) al_draw_text(letra, al_map_rgb(255, 195, 243), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
-    else al_draw_text(letra, al_map_rgb(166, 226, 255), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
+    if(tipo_puzzle == 1) al_draw_text(this->letra, al_map_rgb(255, 195, 243), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
+    else al_draw_text(this->letra, al_map_rgb(166, 226, 255), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
     string* auxiliar = new string;
     *auxiliar = "POSICIONE EL";
     
-    switch (contador) {
+    switch (this->contador) {
     case 0: *auxiliar += " ESPACIO"; break;     case 16: *auxiliar += " NUMERO 16"; break;
     case 1: *auxiliar += " NUMERO 1"; break;    case 17: *auxiliar += " NUMERO 17"; break;
     case 2: *auxiliar += " NUMERO 2"; break;    case 18: *auxiliar += " NUMERO 18"; break;
@@ -56,18 +80,18 @@ void mostrar_interfaz(ALLEGRO_FONT* letra, vector<vector<string>> puzzle, int di
     case 14: *auxiliar += " NUMERO 14"; break;
     case 15: *auxiliar += " NUMERO 15"; break;
     }
-    al_draw_text(letra, al_map_rgb(189, 249, 201), 400, 100, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
+    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 100, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
     al_draw_rectangle(350, 463, 450, 513, al_map_rgb(255, 184, 166), 5);
-    al_draw_text(letra, al_map_rgb(255, 255, 139), 400, 471, ALLEGRO_ALIGN_CENTRE, puzzle[fila][columna].c_str());
+    al_draw_text(this->letra, al_map_rgb(255, 255, 139), 400, 471, ALLEGRO_ALIGN_CENTRE, this->puzzle[0][fila][columna].c_str());
 
-    switch (dificultad) {
+    switch (this->dificultad) {
     case 3: al_draw_filled_rectangle(200, 200, 353, 353, al_map_rgb(255, 255, 255)); break;
     case 4: al_draw_filled_rectangle(200, 200, 403, 403, al_map_rgb(255, 255, 255)); break;
     case 5: al_draw_filled_rectangle(200, 200, 453, 453, al_map_rgb(255, 255, 255)); break;
     }
 
-    for (int i = 0; i < dificultad ; i++) {
-        for (int j = 0; j < dificultad; j++) {
+    for (int i = 0; i < this->dificultad ; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
             al_draw_filled_rectangle(200 + i * 50 + 3, 200 + j * 50 + 3, 200 + (i + 1) * 50, 200 + (j + 1) * 50, al_map_rgb(25, 177, 201));
         }
     }
@@ -76,25 +100,34 @@ void mostrar_interfaz(ALLEGRO_FONT* letra, vector<vector<string>> puzzle, int di
 }
 
 //Se verifica que el caracter ingresado sea numérico.
-char validar_entrada(ALLEGRO_EVENT evento) {
+char Solicitud::validar_entrada(ALLEGRO_EVENT evento) {
     char letra;
     switch (evento.keyboard.keycode) {
-    case ALLEGRO_KEY_1: letra = '1'; break; case ALLEGRO_KEY_2: letra = '2'; break; case ALLEGRO_KEY_3: letra = '3'; break; 
-    case ALLEGRO_KEY_4: letra = '4'; break; case ALLEGRO_KEY_5: letra = '5'; break; case ALLEGRO_KEY_6: letra = '6'; break; 
-    case ALLEGRO_KEY_7: letra = '7'; break; case ALLEGRO_KEY_8: letra = '8'; break; case ALLEGRO_KEY_9: letra = '9'; break; 
+    case ALLEGRO_KEY_1: letra = '1'; break; case ALLEGRO_KEY_2: letra = '2'; break; case ALLEGRO_KEY_3: letra = '3'; break;
+    case ALLEGRO_KEY_4: letra = '4'; break; case ALLEGRO_KEY_5: letra = '5'; break; case ALLEGRO_KEY_6: letra = '6'; break;
+    case ALLEGRO_KEY_7: letra = '7'; break; case ALLEGRO_KEY_8: letra = '8'; break; case ALLEGRO_KEY_9: letra = '9'; break;
     case ALLEGRO_KEY_0: letra = '0'; break;
     case ALLEGRO_KEY_BACKSPACE: letra = '-'; break; default: letra = '+'; break;
     }
     return letra;
 }
 
-//Se solicita que el usuario defina el puzzle inicial o final.
-vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra, int dificultad, int tipo_puzzle) {
-    vector<vector<string>> puzzle(dificultad, vector<string>(dificultad, ""));
-    bool cancelar = false;
-    int contador = 0;
+//---Contructor---//.
+//Constructor con argumentos.
+Solicitud::Solicitud(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana, int dificul, int puzzle) {
+    this->x = this->y = this->contador = 0;
+    this->dificultad = dificul;
+    this->letra = formato;
+    this->pantalla = ventana;
+    this->puzzle = new vector<vector<string>>(dificultad, vector<string>(dificultad, ""));
+    this->tipo_puzzle = puzzle;
+}
 
-    for (int i = 0; i < dificultad && !cancelar; i++) {
+//Se genera el menú para la solicitud del puzzle.
+vector<vector<string>> Solicitud::generar_solicitud() {
+    bool cancelar = false;
+
+    for (int i = 0; i < this->dificultad && !cancelar; i++) {
         for (int j = 0; j < dificultad && !cancelar; j++) {
 
             ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
@@ -103,7 +136,7 @@ vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT*
             al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
             al_register_event_source(fila_evento, al_get_keyboard_event_source());
 
-            mostrar_interfaz(letra, puzzle, dificultad, contador, i, j, tipo_puzzle);
+            this->imprimir_interfaz(i, j, this->tipo_puzzle); 
             while (!continuar) {
                 ALLEGRO_EVENT evento;
                 al_wait_for_event(fila_evento, &evento);
@@ -111,12 +144,12 @@ vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT*
                 switch (evento.type) {
                 case ALLEGRO_EVENT_KEY_CHAR:
                     if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                        if (puzzle[i][j].length() == 0) {
+                        if (this->puzzle[0][i][j].length() == 0) {
                             al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
                         }
-                        else if (!entrada_valida(puzzle, dificultad, i, j)) {
+                        else if (!this->entrada_valida(i, j)) {
                             al_show_native_message_box(pantalla, "Advertencia", "Error de entrada", "Valor repetido/invalidado", NULL, ALLEGRO_MESSAGEBOX_WARN);
-                            puzzle[i][j].clear();
+                            this->puzzle[0][i][j].clear();
                         }
                         else {
                             /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -130,17 +163,17 @@ vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT*
                         }
                     }
                     else {
-                        char auxiliar = validar_entrada(evento);
-                        if (auxiliar != '+' && puzzle[i][j].length() < 2) {
+                        char auxiliar = this->validar_entrada(evento);
+                        if (auxiliar != '+' && this->puzzle[0][i][j].length() < 2) {
                             //al_play_sample(tecla, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                         }
-                        if (auxiliar != '+' && auxiliar != '-' && puzzle[i][j].length() < 2) {
-                            puzzle[i][j].push_back(auxiliar);
-                            mostrar_interfaz(letra, puzzle, dificultad, contador, i, j, tipo_puzzle);
+                        if (auxiliar != '+' && auxiliar != '-' && this->puzzle[0][i][j].length() < 2) {
+                            this->puzzle[0][i][j].push_back(auxiliar);
+                            this->imprimir_interfaz(i, j, this->tipo_puzzle);
                         }
-                        if (auxiliar == '-' && puzzle[i][j].length() > 0) {
-                            puzzle[i][j].pop_back();
-                            mostrar_interfaz(letra, puzzle, dificultad, contador, i, j, tipo_puzzle);
+                        if (auxiliar == '-' && this->puzzle[0][i][j].length() > 0) {
+                            this->puzzle[i][j].pop_back();
+                            this->imprimir_interfaz(i, j, this->tipo_puzzle);
                         }
                     }
                     break;
@@ -151,13 +184,13 @@ vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT*
                         al_wait_for_event(fila_evento, &evento2);
 
                         if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                            mostrar_interfaz(letra, puzzle, dificultad, contador, i, j, tipo_puzzle);
+                            this->imprimir_interfaz(i, j, this->tipo_puzzle);
                             reanudar = true;
                         }
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    puzzle[0][0] = "c";
+                    puzzle[0][0][0] = "c";
                     continuar = true;
                     cancelar = true;
                     break;
@@ -166,6 +199,6 @@ vector<vector<string>> solicitar_puzzle(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT*
             al_destroy_event_queue(fila_evento);
         }
     }
-    return puzzle;
+    return *puzzle;
 }
 #endif

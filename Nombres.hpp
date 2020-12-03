@@ -2,26 +2,29 @@
 #ifndef Nombres_hpp
 #define Nombres_hpp
 
-//-----Funciones-----//.
-//Se imprime la interfaz para la solicitud del nombre.
-void imprimir_texto(ALLEGRO_FONT* letra, string nombre) {
-	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(letra, al_map_rgb(255, 255, 139), 400, 50, ALLEGRO_ALIGN_CENTRE, "INGRESE SU NOMBRE");
-	al_draw_text(letra, al_map_rgb(191, 253, 253), 400, 131, ALLEGRO_ALIGN_CENTRE, nombre.c_str());
+//-----Clase 'Menú_nombres'-----//.
+class Menu_nombres {
+private:
+    //---Atributos---//.
+    ALLEGRO_FONT* letra;
+    ALLEGRO_DISPLAY* pantalla;
+    string nombre;
 
-	al_draw_rectangle(240, 123, 560, 173, al_map_rgb(193, 255, 163), 5);
-	al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
+    //---Funciones privadas---//.
+	char convertir_entrada(ALLEGRO_EVENT); //Cada entrada del teclado se convierte a un caracter.
+	void imprimir_interfaz(); //Se imprime la interfaz para la solicitud de nombres.
+public:
+    //---Contructor---//.
+    Menu_nombres(ALLEGRO_FONT*, ALLEGRO_DISPLAY*); //Constructor con argumentos.
 
-	al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(330, 390, 390, 450, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(450, 300, 510, 360, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(570, 390, 630, 450, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(690, 300, 750, 360, al_map_rgb(255, 255, 255));
-	al_flip_display();
-}
+    //---Métodos---//.
+    string generar_solicitud(); //Se genera la pantalla para solicitar nombres.
+};
 
+//-----Métodos de la clase 'Menú_nombres'-----//.
+//---Funciones privadas---//.
 //Cada entrada del teclado se convierte a un caracter.
-char convertir_entrada(ALLEGRO_EVENT evento) {
+char Menu_nombres::convertir_entrada(ALLEGRO_EVENT evento) {
 	char letra;
 	switch (evento.keyboard.keycode) {
 	case ALLEGRO_KEY_A: letra = 'A'; break; case ALLEGRO_KEY_B: letra = 'B'; break; case ALLEGRO_KEY_C: letra = 'C'; break;
@@ -41,20 +44,45 @@ char convertir_entrada(ALLEGRO_EVENT evento) {
 	return letra;
 }
 
-//Se retorna un nombre, escrito por teclado.
-string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
+//Se imprime la interfaz para la solicitud de nombres.
+void Menu_nombres::imprimir_interfaz() {
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_text(this->letra, al_map_rgb(255, 255, 139), 400, 50, ALLEGRO_ALIGN_CENTRE, "INGRESE SU NOMBRE");
+	al_draw_text(this->letra, al_map_rgb(191, 253, 253), 400, 131, ALLEGRO_ALIGN_CENTRE, this->nombre.c_str());
+
+	al_draw_rectangle(240, 123, 560, 173, al_map_rgb(193, 255, 163), 5);
+	al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
+
+	al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(330, 390, 390, 450, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(450, 300, 510, 360, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(570, 390, 630, 450, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(690, 300, 750, 360, al_map_rgb(255, 255, 255));
+	al_flip_display();
+}
+
+//---Contructor---//.
+//Constructor con argumentos.
+Menu_nombres::Menu_nombres(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana) {
+    this->letra = formato;
+    this->pantalla = ventana;
+    this->nombre = "";
+}
+
+//---Métodos---//.
+//Se genera la pantalla para solicitar nombres.
+string Menu_nombres::generar_solicitud() {
 	ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
 	ALLEGRO_SAMPLE* tecleado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
 	ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
 	al_reserve_samples(5);
 
-	string nombre;
 	bool finalizado = false, reanudar;
 	char aux;
 
 	al_register_event_source(fila_evento, al_get_keyboard_event_source());
 	al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
-	imprimir_texto(letra, nombre);
+	this->imprimir_interfaz();
 
 	while (!finalizado) {
 		ALLEGRO_EVENT evento;
@@ -63,8 +91,8 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 		switch (evento.type) {
 		case ALLEGRO_EVENT_KEY_CHAR:
 			if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-				if (nombre.length() == 0) {
-					al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
+				if (this->nombre.length() == 0) {
+					al_show_native_message_box(this->pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
 				}
 				else {
 					al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -77,17 +105,17 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 				}
 			}
 			else {
-				aux = convertir_entrada(evento);
-				if (aux != '+' && nombre.length() < 8) {
+				aux = this->convertir_entrada(evento);
+				if (aux != '+' && this->nombre.length() < 8) {
 					al_play_sample(tecleado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
-				if (aux != '+' && aux != '-' && nombre.length() < 8) {
+				if (aux != '+' && aux != '-' && this->nombre.length() < 8) {
 					nombre.push_back(aux);
-					imprimir_texto(letra, nombre);
+					this->imprimir_interfaz();
 				}
 				if (aux == '-' && nombre.length() > 0) {
 					nombre.pop_back();
-					imprimir_texto(letra, nombre);
+					this->imprimir_interfaz();
 				}
 			}
 			break;
@@ -98,13 +126,13 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 				al_wait_for_event(fila_evento, &evento2);
 
 				if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-					imprimir_texto(letra, nombre);
+					this->imprimir_interfaz();
 					reanudar = true;
 				}
 			}
 			break;
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
-			nombre = "-";
+			this->nombre = "-";
 			finalizado = true;
 			break;
 		}
@@ -112,6 +140,6 @@ string solicitar_nombre(ALLEGRO_DISPLAY* pantalla, ALLEGRO_FONT* letra) {
 	al_destroy_event_queue(fila_evento);
 	al_destroy_sample(avance);
 	al_destroy_sample(tecleado);
-	return nombre;
+	return this->nombre;
 }
 #endif
