@@ -2,21 +2,21 @@
 
 //-------------------------------------Class Public Methods----------------------------------------
 
-Sistema::Sistema() {
+Sistema::Sistema() { //Constructor predeterminado.
     this->vector = NULL;
 }
 
-Sistema::~Sistema() {
+Sistema::~Sistema() { //Destructor de clase.
     delete this->vector;
 }
 
-void Sistema::pantalla_Principal() {
+void Sistema::pantalla_Principal() { // Se imprime la pantalla principal.
     this->printTitulo();
     this->capturaDimVec();
     return;
 }
 
-void Sistema::pantalla_Vectores() {
+void Sistema::pantalla_Vectores() { //Se imprime la pantalla que muestra los vectores generados.
     system("cls");
     this->printTitulo();
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -45,7 +45,7 @@ void Sistema::pantalla_Vectores() {
     return;
 }
 
-void Sistema::pantalla_Ordenacion() {
+void Sistema::pantalla_Ordenacion() { //Se imprime la pantalla de ordenamiento de vectores.
     system("cls");
     this->printTitulo();
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -60,7 +60,7 @@ void Sistema::pantalla_Ordenacion() {
     return;
 }
 
-void Sistema::pantalla_StatusTiempo() {
+void Sistema::pantalla_StatusTiempo() { //Se imprime un an�lisis de los tiempos de ejecuci�n de cada m�todo ordenaci�n.
     system("cls");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
     cout << "\t\tTABLA COMPARATIVA DE TIEMPOS DE EJECUCION\n" << endl;
@@ -75,7 +75,7 @@ void Sistema::pantalla_StatusTiempo() {
     return;
 }
 
-void Sistema::pantalla_StatusCalculos() {
+void Sistema::pantalla_StatusCalculos() { //Se imprime un an�lisis de los calculos realizados por cada m�todo de ordenaci�n.
     system("cls");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
     cout << "\t\tTABLA COMPARATIVA DE CALCULOS REALIZADOS\n" << endl;
@@ -106,6 +106,11 @@ void Sistema::pantalla_StatusCalculos() {
         cout << this->metodos[i].M_Des << endl << endl;
     }
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+    this->gotoxy(35, 25);
+    cout << "COMP = Comparaciones realizadas";
+    this->gotoxy(35, 26);
+    cout << "MOV  = Movimientos Realizados" << endl << endl;
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
     cout << "\t----Presone una tecla para finalizar el programa---" << endl;
     cin.get();
     return;
@@ -113,14 +118,14 @@ void Sistema::pantalla_StatusCalculos() {
 
 //------------------------------------Class Private Methods----------------------------------------
 
-void Sistema::printTitulo() {
+void Sistema::printTitulo() { //Se imprime el titulo.
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 3);
     cout << "\t\t\tANALISIS DE EFICIENCIA DE LOS " << endl;
     cout << "\t\t\t   METODOS DE ORDENACION\n" << endl;
     return;
 }
 
-void Sistema::capturaDimVec() {
+void Sistema::capturaDimVec() { //Se genera la pantalla para solicitud de la dimensi�n del vector de prueba.
     int n;
     do {
         system("cls");
@@ -134,7 +139,7 @@ void Sistema::capturaDimVec() {
     return;
 }
 
-void Sistema::statusBar(int n) {
+void Sistema::statusBar(int n) { //Imprime la barra de estado de la ordenaci�n de vetores.
     system("cls");
     this->printTitulo();
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -153,7 +158,7 @@ void Sistema::statusBar(int n) {
     return;
 }
 
-void Sistema::ejecutaMetodos(int i) {
+void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de ordenaci�n.
     Vector vecOrd(*(this->vector));
     switch (i) {
     case 0:
@@ -356,7 +361,7 @@ void Sistema::ejecutaMetodos(int i) {
     return;
 }
 
-void Sistema::gotoxy(int x, int y) {
+void Sistema::gotoxy(int x, int y) { //Funci�n gotoxy para dar est�tica al programa.
     HANDLE hcon;
     hcon = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwPos;

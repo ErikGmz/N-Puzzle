@@ -1,6 +1,23 @@
-// Proyecto_Algoritmos.cpp : Este archivo contiene la función "main". La ejecución del programa comienza y termina ahí.
-//
+/*
+Proyecto Final - Análisis de eficiencia de los algoritmos de ordenación.
 
+Integrantes de equipo:
+    - Erik Alejandro Gómez Martánez.
+    - Israel Alejandro Mora González.
+    - Ángel Gabriel Galindo López.
+    - José Emmanuel Rodríguez López.
+
+Fecha de entrega: 18 de diciembre de 2020.
+
+Descripción general: Análisis de eficiencia de los métodos de ordenamiento cerrados. Se realiza un análisis comparativo
+entre los distintos métodos de ordenamiento. Las pruebas se realizan sobre un vector que es generado de manera ascendente
+(mejor caso), de manera aleatoria (caso intermedio) y de manera descendente (peor caso). El programa muestra un análisis
+en tiempos de ejecución y en operaciones realizadas por cada método.
+
+El programa esta contruido bajo el paradigma de programación orientada a objetos. El programa consta de tres clases. 
+
+Programa desarrollado en el IDE Visual Studio 2019.
+*/
 #include "Sistema.hpp"
 
 int main() {
@@ -15,13 +32,3 @@ int main() {
 
     return 0;
 }
-
-// Ejecutar programa: Ctrl + F5 o menú Depurar > Iniciar sin depurar
-// Depurar programa: F5 o menú Depurar > Iniciar depuración
-
-// Sugerencias para primeros pasos: 1. Use la ventana del Explorador de soluciones para agregar y administrar archivos
-//   2. Use la ventana de Team Explorer para conectar con el control de código fuente
-//   3. Use la ventana de salida para ver la salida de compilación y otros mensajes
-//   4. Use la ventana Lista de errores para ver los errores
-//   5. Vaya a Proyecto > Agregar nuevo elemento para crear nuevos archivos de código, o a Proyecto > Agregar elemento existente para agregar archivos de código existentes al proyecto
-//   6. En el futuro, para volver a abrir este proyecto, vaya a Archivo > Abrir > Proyecto y seleccione el archivo .sln

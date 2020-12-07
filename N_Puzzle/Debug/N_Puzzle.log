@@ -1,0 +1,29 @@
+﻿  Allegro.cpp
+  N_Puzzle.cpp
+C:\Users\Usuario\Desktop\N_Puzzle\N_Puzzle.cpp(25,12): warning C4101: 'tiempo_local': variable local sin referencia
+C:\Users\Usuario\Desktop\N_Puzzle\N_Puzzle.cpp(26,11): warning C4101: 'auxiliar': variable local sin referencia
+C:\Users\Usuario\Desktop\N_Puzzle\N_Puzzle.cpp(25,30): warning C4101: 'hora_local': variable local sin referencia
+  Sistema_NPuzzle.cpp
+  Generando código...
+Allegro.obj : error LNK2019: símbolo externo __imp__al_init_font_addon sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+Allegro.obj : error LNK2019: símbolo externo __imp__al_init_ttf_addon sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+Allegro.obj : error LNK2019: símbolo externo __imp__al_init_image_addon sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+Allegro.obj : error LNK2019: símbolo externo __imp__al_install_audio sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+Allegro.obj : error LNK2019: símbolo externo __imp__al_init_acodec_addon sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+Allegro.obj : error LNK2019: símbolo externo __imp__al_init_primitives_addon sin resolver al que se hace referencia en la función "void __cdecl iniciar_allegro(void)" (?iniciar_allegro@@YAXXZ)
+N_Puzzle.obj : error LNK2019: símbolo externo __imp__al_load_font sin resolver al que se hace referencia en la función _main
+Sistema_NPuzzle.obj : error LNK2001: símbolo externo __imp__al_load_font sin resolver
+N_Puzzle.obj : error LNK2019: símbolo externo __imp__al_destroy_font sin resolver al que se hace referencia en la función _main
+Sistema_NPuzzle.obj : error LNK2001: símbolo externo __imp__al_destroy_font sin resolver
+N_Puzzle.obj : error LNK2019: símbolo externo __imp__al_reserve_samples sin resolver al que se hace referencia en la función _main
+Sistema_NPuzzle.obj : error LNK2001: símbolo externo __imp__al_reserve_samples sin resolver
+N_Puzzle.obj : error LNK2019: símbolo externo __imp__al_play_sample sin resolver al que se hace referencia en la función _main
+Sistema_NPuzzle.obj : error LNK2001: símbolo externo __imp__al_play_sample sin resolver
+N_Puzzle.obj : error LNK2019: símbolo externo __imp__al_load_sample sin resolver al que se hace referencia en la función _main
+Sistema_NPuzzle.obj : error LNK2001: símbolo externo __imp__al_load_sample sin resolver
+Sistema_NPuzzle.obj : error LNK2019: símbolo externo __imp__al_draw_text sin resolver al que se hace referencia en la función "private: void __thiscall Sistema_NPuzzle::imprimir_interfaz_confirmacion(void)" (?imprimir_interfaz_confirmacion@Sistema_NPuzzle@@AAEXXZ)
+Sistema_NPuzzle.obj : error LNK2019: símbolo externo __imp__al_destroy_sample sin resolver al que se hace referencia en la función "public: class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __thiscall Sistema_NPuzzle::capturaNombre(void)" (?capturaNombre@Sistema_NPuzzle@@QAE?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ)
+Sistema_NPuzzle.obj : error LNK2019: símbolo externo __imp__al_show_native_message_box sin resolver al que se hace referencia en la función "public: class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __thiscall Sistema_NPuzzle::capturaNombre(void)" (?capturaNombre@Sistema_NPuzzle@@QAE?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ)
+Sistema_NPuzzle.obj : error LNK2019: símbolo externo __imp__al_draw_rectangle sin resolver al que se hace referencia en la función "private: void __thiscall Sistema_NPuzzle::imprimir_interfaz_menuNombres(void)" (?imprimir_interfaz_menuNombres@Sistema_NPuzzle@@AAEXXZ)
+Sistema_NPuzzle.obj : error LNK2019: símbolo externo __imp__al_draw_filled_rectangle sin resolver al que se hace referencia en la función "private: void __thiscall Sistema_NPuzzle::imprimir_interfaz_confirmacion(void)" (?imprimir_interfaz_confirmacion@Sistema_NPuzzle@@AAEXXZ)
+C:\Users\Usuario\Desktop\N_Puzzle\Debug\N_Puzzle.exe : fatal error LNK1120: 16 externos sin resolver

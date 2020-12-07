@@ -2,14 +2,14 @@
 
 //-------------------------------------Class Public Methods----------------------------------------
 
-Vector::Vector(int n = 0) {
+Vector::Vector(int n = 0) { //Contructor con argumentos.
     this->n = n;
     this->elem = new int[this->n];
     this->C = 0;
     this->M = 0;
 }
 
-Vector::Vector(Vector& V) {
+Vector::Vector(Vector& V) { //Constructor de copia.
     this->n = V.n;
     this->elem = new int[this->n];
     for (int i = 0; i < this->n; i++)
@@ -18,7 +18,7 @@ Vector::Vector(Vector& V) {
     this->M = V.M;
 }
 
-void Vector::printVector() {
+void Vector::printVector() { //Imprime el vector.
     cout << "[ ";
     for (int i = 0; i < this->n; i++) {
         if (i < 10)
@@ -32,19 +32,19 @@ void Vector::printVector() {
     return;
 }
 
-void Vector::randomFill(int li, int ls) {
+void Vector::randomFill(int li, int ls) { //Llena aleatoriamente el vector.
     for (int i = 0; i < this->n; i++)
         this->elem[i] = li + rand() % ls;
     return;
 }
 
-void Vector::UpFill() {
+void Vector::UpFill() { //Llena ascendentemente el vector.
     for (int i = 0; i < this->n; i++)
         this->elem[i] = i + 1;
     return;
 }
 
-void Vector::DownFill() {
+void Vector::DownFill() { //Llena descendentemente el vector.
     int val = this->n + 1;
     for (int i = 0; i < this->n; i++)
         this->elem[i] = --val;
@@ -151,13 +151,13 @@ Vector& Vector::heapSort() { //Metodo de ordenacion por monticulo (heapSort).
     return *vecOrd;
 }
 
-Vector::~Vector() {
+Vector::~Vector() { //Destructor de clase.
     delete[] this->elem;
 }
 
 //-----------------------------------Class Operator Methods----------------------------------------
 
-const Vector& Vector::operator=(const Vector& V) {
+const Vector& Vector::operator=(const Vector& V) { //Sobrecarga del operador de asignaci�n.
     if (this != &V) {
         delete this->elem;
         this->n = V.n;
@@ -172,7 +172,7 @@ const Vector& Vector::operator=(const Vector& V) {
 
 //------------------------------------Class Private Methods----------------------------------------
 
-void Vector::merge(int* izq, int nIzq, int* der, int nDer, int* vec) {
+void Vector::merge(int* izq, int nIzq, int* der, int nDer, int* vec) { //Junta dos vectores previamente ordenados.
     int i = 0, j = 0, k = 0;
     while (i < nIzq && j < nDer) {
         if (izq[i] < der[j])
@@ -191,7 +191,7 @@ void Vector::merge(int* izq, int nIzq, int* der, int nDer, int* vec) {
 }
 
 
-void Vector::shiftRight(int* vec, int inf, int sup) {
+void Vector::shiftRight(int* vec, int inf, int sup) { //Verifica que se cumpla la propiedad del mont�culo.
     int raiz = inf;
     while ((raiz * 2) + 1 <= sup) {
         int hijoIzq = (raiz * 2) + 1;
@@ -213,7 +213,7 @@ void Vector::shiftRight(int* vec, int inf, int sup) {
     return;
 }
 
-void Vector::heapify(int* vec, int inf, int sup) {
+void Vector::heapify(int* vec, int inf, int sup) { //Se insertan los valores en el mont�culo.
     int midIdx = (sup - inf - 1) / 2;
     while (midIdx >= 0) {
         shiftRight(vec, midIdx, sup);
