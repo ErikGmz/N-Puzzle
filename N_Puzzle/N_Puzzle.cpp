@@ -19,17 +19,25 @@ int main() {
     char* auxiliar;
 
     Juego juego(fuente, pantalla);
-    Jugador jugador(fuente,pantalla);
+    Jugador jugador(fuente, pantalla);
 
     do {
         al_play_sample(musica, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
+        juego.setContador(0);
+        juego.setParpadeo(true);
+
+        jugador.setPuntaje(0);
         if (juego.pantalla_titulo()) {
             do {
                 repetir3 = false;
+                juego.setContador(0);
+                juego.setParpadeo(true);
+
                 switch (juego.pantalla_menu()) {
                 case 1:
                     do {
                         repetir = false;
+                        jugador.setNombre("");
                         jugador.capturaNombre();
                         if (jugador.getNombre() != "-") {
                             do {
@@ -43,9 +51,11 @@ int main() {
                                 }
                                 else {
                                     //Puzzle *puzzle_inicio = new Puzzle(fuente,pantalla,dificultad + 2);
+                                    juego.setDificultad(juego.getDificultad() + 2);
+
                                     switch (juego.pantalla_menu_Modo()) {
                                     case 1:
-                                        juego.setTiempo(0);
+                                        juego.setTiempo(-1);
                                         juego.modo_manual(jugador);
                                         if (jugador.getPuntaje() == -1) {
                                             cancelado = true;
@@ -108,6 +118,7 @@ int main() {
                 case 2:
                     do {
                         repetir = false;
+
                         switch (juego.pantalla_Records()) {
                         case 1:
                             repetir3 = true;
@@ -118,11 +129,14 @@ int main() {
                                 repetir = true;
                                 break;
                             case 2:
+                                juego.setContador(0);
+                                juego.setParpadeo(true);
+
                                 if (juego.pantalla_eliminacion()) {
-                                    cancelado = true;
+                                    repetir = true;
                                 }
                                 else {
-                                    repetir = true;
+                                    cancelado = true;
                                 }
                                 break;
                             case 3: default:
@@ -137,6 +151,9 @@ int main() {
                     } while (repetir && !cancelado);
                     break;
                 case 3:
+                    juego.setContador(0);
+                    juego.setParpadeo(true);
+
                     juego.pantalla_salida();
                     cancelado = true;
                     break;

@@ -812,6 +812,7 @@ int Juego::posicionado_Records() {
 void Juego::mostrar_registro() {
     fstream archivo("registro.dat", ios::binary | ios::in);
     ALLEGRO_FONT* menor = al_load_font("Fonts/slkscre.ttf", 23, NULL);
+    ALLEGRO_FONT* menor2 = al_load_font("Fonts/slkscre.ttf", 25, NULL);
     int contador = 0;
 
     if (archivo) {
@@ -821,7 +822,7 @@ void Juego::mostrar_registro() {
         while (!archivo.eof()) {
             if (contador < 7) {
                 al_draw_text(menor, al_map_rgb(230, 197, 252), 263, 125 + contador * 45, ALLEGRO_ALIGN_CENTRE, aux->nombre);
-                al_draw_text(this->letra, al_map_rgb(202, 255, 175), 460, 123 + contador * 45, ALLEGRO_ALIGN_CENTRE, to_string(aux->puntaje).c_str());
+                al_draw_text(menor2, al_map_rgb(202, 255, 175), 460, 123 + contador * 45, ALLEGRO_ALIGN_CENTRE, to_string(aux->puntaje).c_str());
                 al_draw_text(menor, al_map_rgb(255, 197, 168), 657, 127 + contador * 45, ALLEGRO_ALIGN_CENTRE, aux->fecha);
                 contador++;
             }
@@ -1121,7 +1122,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual) {
 	string* auxiliar = new string;
 	ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 32, NULL);
 
-	switch (this->dificultad) {
+	switch (this->getDificultad()) {
 	case 3: *auxiliar = "FACIL"; break;
 	case 4: *auxiliar = "NORMAL"; break;
 	case 5: *auxiliar = "DIFICIL"; break;
@@ -1136,7 +1137,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual) {
 	al_draw_text(letra, al_map_rgb(197, 255, 180), 670, 60, ALLEGRO_ALIGN_CENTRE, this->formato_tiempo());
 	delete auxiliar;
 
-	switch (this->dificultad) {
+	switch (this->getDificultad()) {
 	case 3: al_draw_filled_rectangle(200, 200, 353, 353, al_map_rgb(255, 255, 255)); break;
 	case 4: al_draw_filled_rectangle(200, 200, 403, 403, al_map_rgb(255, 255, 255)); break;
 	case 5: al_draw_filled_rectangle(200, 200, 453, 453, al_map_rgb(255, 255, 255)); break;
@@ -1145,8 +1146,8 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual) {
 	al_draw_filled_rectangle(50, 440, 280, 500, al_map_rgb(255, 255, 255));
 	al_draw_filled_rectangle(470, 440, 750, 500, al_map_rgb(255, 255, 255));
 
-	for (int i = 0; i < this->dificultad; i++) {
-		for (int j = 0; j < this->dificultad; j++) {
+	for (int i = 0; i < this->getDificultad(); i++) {
+		for (int j = 0; j < this->getDificultad(); j++) {
 			al_draw_filled_rectangle(200 + i * 50 + 3, 200 + j * 50 + 3, 200 + (i + 1) * 50, 200 + (j + 1) * 50, al_map_rgb(25, 177, 201));
 		}
 	}

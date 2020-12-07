@@ -35,9 +35,11 @@ public:
     bool pantalla_finJuego(Jugador); //Se genera el menú de finalización.
     void pantalla_salida(); //Se genera la pantalla de salida.
     void setTiempo(int);
-    int getTiempo() { return this->tiempo; }
+    inline int getTiempo() { return this->tiempo; }
     void setDificultad(int);
-    int getDificultad() { return this->dificultad; }
+    inline int getDificultad() { return this->dificultad; }
+    inline void setParpadeo(bool parametro) { parpadeo = parametro; }
+    inline void setContador(int parametro) { contador = parametro; }
 
     void modo_manual(Jugador &);
 private:
