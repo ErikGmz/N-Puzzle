@@ -1,8 +1,8 @@
-//-----Compilaci�n de la cabecera-----//.
+//-----Compilación de la cabecera-----//.
 #ifndef Allegro_hpp
 #define Allegro_hpp
 
-//-----Librer�as-----//.
+//-----Librerías-----//.
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -18,11 +18,12 @@
 #include <list>
 #include <vector>
 #include <queue>
+#include <cmath>
 
 //-----Espacio de nombres-----//.
 using namespace std;
 
-//-----Funciones-----//.
-//Inicializaci�n e instalaci�n de m�ltiples componentes de Allegro.
+//-----Prototipos de funciones-----//.
+//Inicialización e instalación de múltiples componentes de Allegro.
 void iniciar_allegro();
 #endif

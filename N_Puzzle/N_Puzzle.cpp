@@ -1,3 +1,7 @@
+//-----Compilación del archivo fuente-----//.
+#ifndef N_Puzzle_cpp
+#define N_Puzzle_cpp
+
 #include "Juego.hpp"
 
 int main() {
@@ -5,16 +9,17 @@ int main() {
     iniciar_allegro();
     ALLEGRO_DISPLAY* pantalla = al_create_display(800, 550);
     ALLEGRO_FONT* fuente = al_load_font("Fonts/slkscre.ttf", 35, NULL);
-    ALLEGRO_SAMPLE* musica = al_load_sample("Sounds/Fallin' Love   MOTHER.mp3");
+    ALLEGRO_BITMAP* icono = al_load_bitmap("Sources/Fichas/F7.png");
+    ALLEGRO_SAMPLE* musica_menus = al_load_sample("Sounds/Super Mario Bros 2 (NES) Music   Character Select.mp3");
     ALLEGRO_SAMPLE_ID id1;
     al_reserve_samples(3);
 
     al_set_window_position(pantalla, 200, 100);
     al_set_window_title(pantalla, "N-Puzzle");
+    al_set_display_icon(pantalla, icono);
 
     bool cancelado = false, repetir, repetir2, repetir3;
     vector<vector<string>>* puzzle_inicio = new vector<vector<string>>;
-    vector<vector<string>>* puzzle_meta = new vector<vector<string>>;
     time_t tiempo_local; tm* hora_local;
     char* auxiliar;
 
@@ -22,17 +27,16 @@ int main() {
     Jugador jugador(fuente, pantalla);
 
     do {
-        al_play_sample(musica, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
         juego.setContador(0);
         juego.setParpadeo(true);
 
         jugador.setPuntaje(0);
         if (juego.pantalla_titulo()) {
+            al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
             do {
                 repetir3 = false;
                 juego.setContador(0);
                 juego.setParpadeo(true);
-
                 switch (juego.pantalla_menu()) {
                 case 1:
                     do {
@@ -53,12 +57,19 @@ int main() {
                                     //Puzzle *puzzle_inicio = new Puzzle(fuente,pantalla,dificultad + 2);
                                     juego.setDificultad(juego.getDificultad() + 2);
 
-                                    switch (juego.pantalla_menu_Modo()) {
+                                    switch (juego.pantalla_menu_Modo(id1)) {
                                     case 1:
-                                        juego.setTiempo(-1);
+                                        juego.setTiempo(0);
                                         juego.modo_manual(jugador);
+                                        juego.setContador(0);
+                                        juego.setParpadeo(true);
+
                                         if (jugador.getPuntaje() == -1) {
                                             cancelado = true;
+                                        }
+                                        else if (jugador.getPuntaje() == -2) {
+                                            al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
+                                            repetir3 = true;
                                         }
                                         else {
                                             tiempo_local = time(NULL);
@@ -71,6 +82,7 @@ int main() {
                                                 cancelado = true;
                                             }
                                             else {
+                                                al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
                                                 repetir3 = true;
                                             }
                                         }
@@ -170,5 +182,7 @@ int main() {
 
     al_destroy_display(pantalla);
     al_destroy_font(fuente);
+    al_destroy_sample(musica_menus);
     return 0;
 }
+#endif

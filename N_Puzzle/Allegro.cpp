@@ -1,5 +1,12 @@
+//-----Compilación del archivo fuente-----//.
+#ifndef Allegro_cpp
+#define Allegro_cpp
+
+//-----Librerías-----//.
 #include "Allegro.hpp"
 
+//-----Implementación de funciones-----//.
+//Inicialización e instalación de múltiples componentes de Allegro.
 void iniciar_allegro() {
     al_init();
     al_install_audio();
@@ -11,3 +18,4 @@ void iniciar_allegro() {
     al_init_acodec_addon();
     al_init_primitives_addon();
 }
+#endif
