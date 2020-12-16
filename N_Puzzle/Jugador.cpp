@@ -118,7 +118,7 @@ void Jugador::capturaNombre() {
             }
             else {
                 aux = this->convertir_entrada(evento);
-                if (aux != '+' && this->nombre.length() < 8) {
+                if (aux != '+' && this->nombre.length() < 8 && this->nombre.length() > 0) {
                     al_play_sample(tecleado, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 }
                 if (aux != '+' && aux != '-' && this->nombre.length() < 8) {

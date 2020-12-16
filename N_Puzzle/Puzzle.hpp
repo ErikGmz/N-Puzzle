@@ -16,7 +16,7 @@ struct comp {
 
 //-----Clase 'Puzzle'-----//.
 class Puzzle {
-private:
+protected:
     //---Atributos---//.
     int tipo_puzzle;
     vector<vector<string>>* puzzle;
@@ -26,7 +26,6 @@ private:
     ALLEGRO_DISPLAY* pantalla;
 
     //---Funciones privadas---//.
-    void imprimir_interfaz_captura(int, int, int); //Se imprime la interfaz para la solicitud.
     char validar_entrada(ALLEGRO_EVENT); //Se verifica que el caracter ingresado sea numérico.
     bool entrada_valida(int, int); //Se verifica si la entrada actual es repetida/válida o no.
     int calculaCosto(vector<vector<string>>&, vector<vector<string>>&); //Se calcula el costo que requiere resolver un puzzle inicial a uno meta.
@@ -38,12 +37,48 @@ public:
     ~Puzzle(); //Destructor.
 
     //---Métodos---//.
-    void capturaPuzzle(); //Se genera el menú para la solicitud del puzzle.
     void generaPuzzle(); //Se genera el puzzle de forma aleatoria.
     //void imprimePuzzle(); //Se imprime el puzzle en pantalla.
     void resuelve(int, int, vector<vector<string>> &); //Si tiene solución, se resuelve el puzzle por medio del algoritmo branch and bound.
     bool operator==(Puzzle &); //Se compara si ambos puzzles son exactamente iguales.
     vector<string> &operator[](int); //Se retorna un vector relacionado con el tablero.
     void swap(int); //Se intercambian dos valores dentro del tablero.
+    int inversiones(int *); //Se retorna la cantidad de permutaciones del tablero actual.
+    virtual bool resolvible_manual() { return true; } //Se verifica si el puzzle puede resolverse con la meta predeterminada.
+};
+
+//-----Clase 'Puzzle_facil', hija de 'Puzzle'-----//.
+class Puzzle_facil : public Puzzle {
+public:
+    //---Constructor y destructor---//.
+    Puzzle_facil(ALLEGRO_FONT* letra, ALLEGRO_DISPLAY* pantalla, int valor) : Puzzle(letra, pantalla, valor) {} //Constructor con argumentos.
+    ~Puzzle_facil() { Puzzle::~Puzzle(); } //Destructor.
+
+    //---Métodos---//.
+    bool resolvible_manual(); //Se verifica si el 8-puzzle puede resolverse con la meta predeterminada.
+};
+
+//-----Clase 'Puzzle_medio', hija de 'Puzzle'-----//.
+class Puzzle_medio : public Puzzle {
+private:
+    int posicion_x_cero(); //Se retorna la posición horizontal del espacio.
+public:
+    //---Constructor y destructor---//.
+    Puzzle_medio(ALLEGRO_FONT* letra, ALLEGRO_DISPLAY* pantalla, int valor) : Puzzle(letra, pantalla, valor) {} //Constructor con argumentos.
+    ~Puzzle_medio() { Puzzle::~Puzzle(); } //Destructor.
+
+    //---Métodos---//.
+    bool resolvible_manual(); //Se verifica si el 15-puzzle puede resolverse con la meta predeterminada.
+};
+
+//-----Clase 'Puzzle_dificil', hija de 'Puzzle'-----//.
+class Puzzle_dificil : public Puzzle {
+public:
+    //---Constructor y destructor---//.
+    Puzzle_dificil(ALLEGRO_FONT* letra, ALLEGRO_DISPLAY* pantalla, int valor) : Puzzle(letra, pantalla, valor) {} //Constructor con argumentos.
+    ~Puzzle_dificil() { Puzzle::~Puzzle(); } //Destructor.
+
+    //---Métodos---//.
+    bool resolvible_manual(); //Se verifica si el 24-puzzle puede resolverse con la meta predeterminada.
 };
 #endif

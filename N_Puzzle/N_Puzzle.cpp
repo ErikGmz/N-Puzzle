@@ -11,7 +11,8 @@ int main() {
     ALLEGRO_FONT* fuente = al_load_font("Fonts/slkscre.ttf", 35, NULL);
     ALLEGRO_BITMAP* icono = al_load_bitmap("Sources/Fichas/F7.png");
     ALLEGRO_SAMPLE* musica_menus = al_load_sample("Sounds/Super Mario Bros 2 (NES) Music   Character Select.mp3");
-    ALLEGRO_SAMPLE_ID id1;
+    ALLEGRO_SAMPLE* musica_juego = al_load_sample("Sounds/Casino Kid (NES) Music   Casino Theme.mp3");
+    ALLEGRO_SAMPLE_ID id1, id2;
     al_reserve_samples(3);
 
     al_set_window_position(pantalla, 200, 100);
@@ -19,8 +20,8 @@ int main() {
     al_set_display_icon(pantalla, icono);
 
     bool cancelado = false, repetir, repetir2, repetir3;
-    vector<vector<string>>* puzzle_inicio = new vector<vector<string>>;
     time_t tiempo_local; tm* hora_local;
+    Puzzle* inicio, *fin;
     char* auxiliar;
 
     Juego juego(fuente, pantalla);
@@ -54,7 +55,6 @@ int main() {
                                     cancelado = true;
                                 }
                                 else {
-                                    //Puzzle *puzzle_inicio = new Puzzle(fuente,pantalla,dificultad + 2);
                                     juego.setDificultad(juego.getDificultad() + 2);
 
                                     switch (juego.pantalla_menu_Modo(id1)) {
@@ -88,28 +88,45 @@ int main() {
                                         }
                                         break;
                                     case 2:
-                                        /*
-                                        puzzle_inicio.capturaPuzzle();
-                                        if (puzzle_inicio[0][0][0] == "c") {
+                                        al_play_sample(musica_juego, 0.5, 0, 1, ALLEGRO_PLAYMODE_LOOP, &id2);
+                                        juego.capturar_puzzles(inicio, fin, id2);
+                                        if (inicio[0][0][0] == "c") {
                                             cancelado = true;
                                         }
-                                        else {
-                                            
-                                            puzzle = new Solicitud(fuente, pantalla, dificultad + 2, 2);
-                                            *puzzle_meta = puzzle->generar_solicitud();
-                                            delete puzzle;
-
-                                            if (puzzle_meta[0][0][0] == "c") {
+                                        else if (inicio[0][0][0] == "d") {
+                                            al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
+                                            repetir3 = true;
+                                        }
+                                        else if (inicio[0][0][0] == "e") {
+                                            if (!juego.pantalla_fin_simulacion(3)) {
                                                 cancelado = true;
                                             }
                                             else {
-                                                demostracion = new Fin(fuente, pantalla);
-                                                demostracion->generar_fin();
+                                                al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
                                                 repetir3 = true;
-                                                delete demostracion;
                                             }
                                         }
-                                        */
+                                        else if (inicio[0][0][0] == "f") {
+                                            if (!juego.pantalla_fin_simulacion(2)) {
+                                                cancelado = true;
+                                            }
+                                            else {
+                                                al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
+                                                repetir3 = true;
+                                            }
+                                        }
+                                        else {
+                                            //Colocar Branch and Bound.
+                                            al_stop_sample(&id2);
+                                            if (!juego.pantalla_fin_simulacion(1)) {
+                                                cancelado = true;
+                                            }
+                                            else {
+                                                al_play_sample(musica_menus, 0.5, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, &id1);
+                                                repetir3 = true;
+                                            }
+                                        }
+                                        delete inicio, fin;
                                         break;
                                     case 3:
                                         repetir2 = true;

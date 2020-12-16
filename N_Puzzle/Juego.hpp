@@ -29,6 +29,11 @@ struct Par_coordenadas {
     direcciones posicion;
 };
 
+struct Coordenadas {
+    int x_inicial, y_inicial, x_final, y_final;
+    int posicion;
+};
+
 //-----Prototipos de funciones-----//.
 //Se genera el ordenamiento descendente para ordenar jugadores.
 bool ordenamiento_descendente(Jugador, Jugador);
@@ -59,10 +64,15 @@ private:
     void imprimir_interfaz_confirmacion(); //Se imprime la interfaz de la pantalla para confirmar la eliminación del registro.
     void imprimir_interfaz_eliminacion(); //Se imprime la intefaz de eliminación.
     void imprimir_interfaz_salida(); //Se imprime la interfaz de la pantalla de salida.
-    void imprimir_interfaz_finJuego(Jugador); //Se imprime la interfaz del menú de finalización.
+    void imprimir_interfaz_finJuego(Jugador); //Se imprime la interfaz del menú de finalización
+    void imprimir_fin_simulacion(int); //Se imprime la interfaz del menú para el fin de la simulación.
 
     int posicionado_modo_manual(vector<Par_coordenadas>); //Se determina en cuál ícono se ha posicionado el cursor.
     void imprimir_interfaz_modo_manual(Jugador, Puzzle *, Puzzle *); //Se imprime la interfaz de la partida manual.
+    void imprimir_interfaz_captura(int, int, Puzzle *, Puzzle *); //Se imprime la interfaz para la solicitud.
+    vector<Coordenadas> lugares_disponibles(Puzzle*, int); //Se retorna un vector con las coordenadas de espacios restantes de un tablero.
+    int definir_posicion(int, int); //Se define a qué valor corresponde un par fila/columna.
+    int posicionado(vector<Coordenadas>); //Se determina en cuál espacio está posicionado el cursor.
 
     void mostrar_registro(); //Se muestran los datos de cada jugador dentro del ranking.
     void actualizar_archivo(Jugador); //Se actualiza el contenido del registro.
@@ -85,7 +95,9 @@ public:
     int pantalla_confirmacion(); //Se genera la pantalla para confirmar la eliminación del registro.
     bool pantalla_eliminacion(); //Se genera la pantalla de eliminación.
     bool pantalla_finJuego(Jugador); //Se genera el menú de finalización.
+    bool pantalla_fin_simulacion(int); //Se genera la pantalla para el fin de la simulación.
     void pantalla_salida(); //Se genera la pantalla de salida.
+
     void setTiempo(int); //Se establece el tiempo del juego manual.
     inline int getTiempo() { return this->tiempo; } //Se obtiene el tiempo del juego actual.
     void setDificultad(int); //Se establece la dificultad del juego actual.
@@ -93,5 +105,6 @@ public:
     inline void setParpadeo(bool parametro) { parpadeo = parametro; } //Se establece el parámetro para el parpadeo de íconos.
     inline void setContador(int parametro) { contador = parametro; } //Se establece el contador para controlar parpadeos.
     void modo_manual(Jugador&); //Se gestiona el modo manual del juego.
+    void capturar_puzzles(Puzzle *&, Puzzle *&, ALLEGRO_SAMPLE_ID); //Se genera el menú para la solicitar los puzzles.
 };
 #endif

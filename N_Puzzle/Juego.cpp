@@ -225,6 +225,34 @@ void Juego::imprimir_interfaz_finJuego(Jugador jugador_actual) {
     al_flip_display();
 }
 
+//Se imprime la interfaz del menú para el fin de la simulación.
+void Juego::imprimir_fin_simulacion(int parametro) {
+    this->contador++;
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    if (parametro == 1) {
+        al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SIMULACION TERMINADA");
+    }
+    else if (parametro == 2){
+        al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SISTEMA SIN SOLUCION");
+    }
+    else {
+        al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLES IGUALES");
+    }
+
+    if (this->contador == 55) {
+        if (this->parpadeo) {
+            this->parpadeo = false;
+        }
+        else {
+            this->parpadeo = true;
+        }
+        this->contador = 0;
+    }
+    if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
+    al_flip_display();
+}
+
 //Se determina en cuál ícono se ha posicionado el cursor.
 int Juego::posicionado_modo_manual(vector<Par_coordenadas> parametros) {
     for (auto it : parametros) {
@@ -232,8 +260,8 @@ int Juego::posicionado_modo_manual(vector<Par_coordenadas> parametros) {
             return it.posicion;
         }
     }
-    if (this->x >= 470 && this->x <= 750 && this->y >= 440 && this->y <= 500) return 6;
-    else return 5;
+    if (this->x >= 470 && this->x <= 750 && this->y >= 460 && this->y <= 520) return 6;
+    else return 7;
 }
 
 //Se imprime la interfaz de la partida manual.
@@ -247,7 +275,6 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
-
     for (int i = 1; i < 25; i++) {
         string aux = "Sources/Fichas/F";
         ALLEGRO_BITMAP* elemento = al_load_bitmap((aux + to_string(i) + ".png").c_str());
@@ -325,6 +352,216 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     al_destroy_font(letra); al_destroy_font(letra1); al_destroy_font(letra2);
     al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4); al_destroy_bitmap(puzzle_5x5);
     delete fichas;
+}
+
+//Se imprime la interfaz para la solicitud.
+void Juego::imprimir_interfaz_captura(int conteo, int tipo_puzzle, Puzzle *inicio, Puzzle *fin) {
+    ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 32, NULL);
+    ALLEGRO_FONT* letra1 = al_load_font("Fonts/slkscre.ttf", 30, NULL);
+    ALLEGRO_FONT* letra2 = al_load_font("Fonts/slkscre.ttf", 26, NULL);
+    ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
+    ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
+    ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
+
+    vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
+    for (int i = 1; i < 25; i++) {
+        string aux = "Sources/Fichas/F";
+        ALLEGRO_BITMAP* elemento = al_load_bitmap((aux + to_string(i) + ".png").c_str());
+        fichas->push_back(elemento);
+    }
+
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    if (tipo_puzzle == 1) al_draw_text(this->letra, al_map_rgb(255, 195, 243), 400, 20, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
+    else al_draw_text(this->letra, al_map_rgb(166, 226, 255), 400, 20, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
+    string* auxiliar = new string;
+    *auxiliar = "POSICIONE LA FICHA NO. ";
+
+    switch (conteo) {     
+    case 1: *auxiliar += "1"; break;    case 16: *auxiliar += "16"; break;
+    case 2: *auxiliar += "2"; break;    case 17: *auxiliar += "17"; break;
+    case 3: *auxiliar += "3"; break;    case 18: *auxiliar += "18"; break;
+    case 4: *auxiliar += "4"; break;    case 19: *auxiliar += "19"; break;
+    case 5: *auxiliar += "5"; break;    case 20: *auxiliar += "20"; break;
+    case 6: *auxiliar += "6"; break;    case 21: *auxiliar += "21"; break;
+    case 7: *auxiliar += "7"; break;    case 22: *auxiliar += "22"; break;
+    case 8: *auxiliar += "8"; break;    case 23: *auxiliar += "23"; break;
+    case 9: *auxiliar += "9"; break;    case 24: *auxiliar += "24"; break;
+    case 10: *auxiliar += "10"; break;
+    case 11: *auxiliar += "11"; break;
+    case 12: *auxiliar += "12"; break;
+    case 13: *auxiliar += "13"; break;
+    case 14: *auxiliar += "14"; break;
+    case 15: *auxiliar += "15"; break;
+    }
+    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 70, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
+
+    switch (this->getDificultad()) {
+    case 3:
+        al_draw_text(letra1, al_map_rgb(253, 230, 183), 189, 160, ALLEGRO_ALIGN_CENTRE, "INICIO");
+        al_draw_bitmap(puzzle_3x3, 108, 200, NULL);
+        al_draw_text(letra1, al_map_rgb(253, 230, 183), 609, 160, ALLEGRO_ALIGN_CENTRE, "META");
+        al_draw_bitmap(puzzle_3x3, 528, 200, NULL);
+        break;
+    case 4:
+        al_draw_text(letra1, al_map_rgb(252, 204, 143), 181, 140, ALLEGRO_ALIGN_CENTRE, "INICIO");
+        al_draw_bitmap(puzzle_4x4, 73, 180, NULL);
+        al_draw_text(letra1, al_map_rgb(252, 204, 143), 619, 140, ALLEGRO_ALIGN_CENTRE, "META");
+        al_draw_bitmap(puzzle_4x4, 511, 180, NULL);
+        break;
+    case 5:
+        al_draw_text(letra2, al_map_rgb(252, 143, 143), 222, 129, ALLEGRO_ALIGN_CENTRE, "INICIO");
+        al_draw_bitmap(puzzle_5x5, 88, 160, NULL);
+        al_draw_text(letra2, al_map_rgb(252, 143, 143), 578, 129, ALLEGRO_ALIGN_CENTRE, "META");
+        al_draw_bitmap(puzzle_5x5, 444, 160, NULL);
+        break;
+    }
+
+    al_draw_filled_rectangle(260, 460, 540, 520, al_map_rgb(255, 255, 255));
+
+    for (int i = 0; i < this->getDificultad(); i++) {
+        for (int j = 0; j < this->getDificultad(); j++) {
+            if (inicio[0][i][j] != "0") {
+                valores auxiliar2 = this->convertir_string(inicio[0][i][j]);
+
+                switch (this->dificultad) {
+                case 3: al_draw_bitmap(fichas[0][auxiliar2], 108 + j * 53 + 3, 200 + i * 53 + 3, NULL); break;
+                case 4: al_draw_bitmap(fichas[0][auxiliar2], 73 + j * 53 + 3, 180 + i * 53 + 3, NULL); break;
+                case 5: al_draw_bitmap(fichas[0][auxiliar2], 88 + j * 53 + 3, 160 + i * 53 + 3, NULL); break;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < this->getDificultad(); i++) {
+        for (int j = 0; j < this->getDificultad(); j++) {
+            if (fin[0][i][j] != "0") {
+                valores auxiliar3 = this->convertir_string(fin[0][i][j]);
+
+                switch (this->dificultad) {
+                case 3: al_draw_bitmap(fichas[0][auxiliar3], 528 + j * 53 + 3, 200 + i * 53 + 3, NULL); break;
+                case 4: al_draw_bitmap(fichas[0][auxiliar3], 511 + j * 53 + 3, 180 + i * 53 + 3, NULL); break;
+                case 5: al_draw_bitmap(fichas[0][auxiliar3], 444 + j * 53 + 3, 160 + i * 53 + 3, NULL); break;
+                }
+            }
+        }
+    }
+
+    al_flip_display();
+    al_destroy_font(letra); al_destroy_font(letra1); al_destroy_font(letra2);
+    al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4); al_destroy_bitmap(puzzle_5x5);
+    delete auxiliar;
+}
+
+//Se retorna un vector con las coordenadas de espacios restantes de un tablero.
+vector<Coordenadas> Juego::lugares_disponibles(Puzzle* tablero, int tipo_tablero) {
+    vector<Coordenadas> lista_espacios;
+    int x_inicial, y_inicial;
+
+    switch (this->dificultad) {
+    case 3: 
+        if (tipo_tablero == 1) {
+            x_inicial = 108; y_inicial = 200; 
+        }
+        else {
+            x_inicial = 528; y_inicial = 200;
+        }
+        break;
+    case 4: 
+        if (tipo_tablero == 1) {
+            x_inicial = 73; y_inicial = 180; 
+        }
+        else {
+            x_inicial = 511; y_inicial = 180; 
+        }
+        break;
+    case 5: 
+        if (tipo_tablero == 1) {
+            x_inicial = 88; y_inicial = 160;
+        }
+        else {
+            x_inicial = 444; y_inicial = 160;
+        }
+        break;
+    }
+    
+    for (int i = 0; i < this->dificultad; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
+            if (tablero[0][i][j] == "0") {
+                Coordenadas auxiliar;
+                auxiliar.x_inicial = x_inicial + j * 53 + 3;        
+                auxiliar.y_inicial = y_inicial + i * 53 + 3;
+                auxiliar.x_final = x_inicial + (j + 1) * 53 + 3;
+                auxiliar.y_final = y_inicial + (i + 1) * 53 + 3;
+                auxiliar.posicion = this->definir_posicion(i, j);
+                lista_espacios.push_back(auxiliar);
+            }
+        }
+    }
+    return lista_espacios;
+}
+
+//Se define a qué valor corresponde un par fila/columna.
+int Juego::definir_posicion(int i, int j) {
+    switch (i) {
+    case 0:
+        switch (j) {
+        case 0: return 1; break;
+        case 1: return 2; break;
+        case 2: return 3; break;
+        case 3: return 4; break;
+        case 4: return 5; break;
+        }
+        break;
+    case 1:
+        switch (j) {
+        case 0: return 6; break;
+        case 1: return 7; break;
+        case 2: return 8; break;
+        case 3: return 9; break;
+        case 4: return 10; break;
+        }
+        break;
+    case 2:
+        switch (j) {
+        case 0: return 11; break;
+        case 1: return 12; break;
+        case 2: return 13; break;
+        case 3: return 14; break;
+        case 4: return 15; break;
+        }
+        break;
+    case 3:
+        switch (j) {
+        case 0: return 16; break;
+        case 1: return 17; break;
+        case 2: return 18; break;
+        case 3: return 19; break;
+        case 4: return 20; break;
+        }
+        break;
+    case 4:
+        switch (j) {
+        case 0: return 21; break;
+        case 1: return 22; break;
+        case 2: return 23; break;
+        case 3: return 24; break;
+        case 4: return 25; break;
+        }
+        break;
+    }
+    return 0;
+}
+
+//Se determina en cuál espacio está posicionado el cursor.
+int Juego::posicionado(vector<Coordenadas> lista_espacios) {
+    for (auto it : lista_espacios) {
+        if (this->x >= it.x_inicial && this->x <= it.x_final && this->y >= it.y_inicial && this->y <= it.y_final) {
+            return it.posicion;
+        }
+    }
+    if (this->x >= 260 && this->x <= 540 && this->y >= 460 && this->y <= 520) return 26;
+    else return 27;
 }
 
 //Se muestran los datos de cada jugador dentro del ranking.
@@ -520,12 +757,9 @@ vector<Par_coordenadas> Juego::fichas_a_mover(Puzzle *tablero) {
             if (tablero[0][i][j] == "0") {
 
                 switch (this->dificultad) {
-                case 3:
-                    x_inicial = 108; y_inicial = 200; x_final = 155; y_final = 247; break;
-                case 4:
-                    x_inicial = 73; y_inicial = 180; x_final = 120; y_final = 227; break;
-                case 5:
-                    x_inicial = 88; y_inicial = 160; x_final = 135; y_final = 207; break;
+                case 3: x_inicial = 108; y_inicial = 200; x_final = 155; y_final = 247; break;
+                case 4: x_inicial = 73; y_inicial = 180; x_final = 120; y_final = 227; break;
+                case 5: x_inicial = 88; y_inicial = 160; x_final = 135; y_final = 207; break;
                 }
 
                 if (i + 1 < this->dificultad && i - 1 >= 0 && j + 1 < this->dificultad && j - 1 >= 0) { //Posición central del espacio.
@@ -941,10 +1175,10 @@ int Juego::pantalla_menu_Modo(ALLEGRO_SAMPLE_ID id1) {
                 al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
                 al_rest(0.5);
-                al_stop_sample(&id1);
+                if(auxiliar != 3) al_stop_sample(&id1);
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_flip_display();
-                al_rest(0.5);
+                al_rest(0.9);
                 retorno = auxiliar;
                 continuar = true;
             }
@@ -1229,6 +1463,63 @@ bool Juego::pantalla_finJuego(Jugador jugador_actual) {
     return true;
 }
 
+//Se genera la pantalla para el fin de la simulación.
+bool Juego::pantalla_fin_simulacion(int parametro) {
+    ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+    ALLEGRO_TIMER* temporizador = al_create_timer(1.0 / 60);
+    ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+    al_reserve_samples(5);
+
+    bool continuar = false, reanudar;
+
+    al_register_event_source(fila_evento, al_get_keyboard_event_source());
+    al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
+    al_register_event_source(fila_evento, al_get_timer_event_source(temporizador));
+    al_start_timer(temporizador);
+
+    while (!continuar) {
+        ALLEGRO_EVENT evento;
+        al_wait_for_event(fila_evento, &evento);
+
+        switch (evento.type) {
+        case ALLEGRO_EVENT_KEY_DOWN:
+            if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+
+                al_rest(0.5);
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_flip_display();
+                al_rest(0.9);
+                continuar = true;
+            }
+            break;
+        case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+            reanudar = false;
+            while (!reanudar) {
+                ALLEGRO_EVENT evento2;
+                al_wait_for_event(fila_evento, &evento2);
+
+                if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
+                    this->imprimir_fin_simulacion(parametro);
+                    reanudar = true;
+                }
+            }
+            break;
+        case ALLEGRO_EVENT_TIMER:
+            this->imprimir_fin_simulacion(parametro);
+            break;
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            return false;
+            break;
+        }
+    }
+    al_destroy_event_queue(fila_evento);
+    al_stop_timer(temporizador);
+    al_destroy_timer(temporizador);
+    al_destroy_sample(avance);
+    return true;
+}
+
 //Se establece la dificultad del juego.
 void Juego::pantalla_salida() {
     ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
@@ -1307,21 +1598,43 @@ void Juego::modo_manual(Jugador &jugador_actual) {
     ALLEGRO_SAMPLE* musica_juego = al_load_sample("Sounds/Casino Kid (NES) Music   Casino Theme.mp3");
     ALLEGRO_SAMPLE_ID id1;
 	al_reserve_samples(3);
-    
-    Puzzle* tablero_inicial = new Puzzle(this->letra, this->pantalla, this->dificultad);
-    tablero_inicial->generaPuzzle();
-    Puzzle* tablero_final = new Puzzle(this->letra, this->pantalla, this->dificultad);
-    vector<Par_coordenadas>* parametros = new vector<Par_coordenadas>;
-    *parametros = this->fichas_a_mover(tablero_inicial);
+    Puzzle* tablero_final, *tablero_inicial;
+
+    if (this->dificultad == 3) {
+        tablero_final = new Puzzle_facil(this->letra, this->pantalla, 3);
+        tablero_inicial = new Puzzle_facil(this->letra, this->pantalla, 3);
+    }
+    else if (this->dificultad == 4) {
+        tablero_final = new Puzzle_medio(this->letra, this->pantalla, this->dificultad);
+        tablero_inicial = new Puzzle_medio(this->letra, this->pantalla, this->dificultad);
+    }
+    else {
+        tablero_final = new Puzzle_dificil(this->letra, this->pantalla, this->dificultad);
+        tablero_inicial = new Puzzle_dificil(this->letra, this->pantalla, this->dificultad);
+    }
+
+    int contador = 1;
+    for (int i = 0; i < this->dificultad; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
+            if (contador == this->dificultad * this->dificultad) {
+                tablero_final[0][i][j] = "0";
+            }
+            else {
+                tablero_final[0][i][j] = to_string(contador++);
+            }
+        }
+    }
 
     do {
-        tablero_final->generaPuzzle();
-    } while (*tablero_inicial == *tablero_final);
+        tablero_inicial->generaPuzzle();
+    } while (*tablero_inicial == *tablero_final || !tablero_inicial->resolvible_manual());
+
+    vector<Par_coordenadas>* parametros = new vector<Par_coordenadas>;
+    *parametros = this->fichas_a_mover(tablero_inicial);
 
 	bool continuar = false, reanudar, sonido = false;
 	int auxiliar = 2, veces_ayuda = 0;
 
-    //al_rest(5.0);
     al_play_sample(musica_juego, 0.5, 0, 1, ALLEGRO_PLAYMODE_LOOP, &id1);
 
 	al_register_event_source(fila_evento, al_get_display_event_source(this->pantalla));
@@ -1340,7 +1653,7 @@ void Juego::modo_manual(Jugador &jugador_actual) {
 			y = evento.mouse.y;
 			auxiliar = this->posicionado_modo_manual(*parametros);
 
-            if (auxiliar >= 1 && auxiliar <= 4 || auxiliar == 6) {
+            if (auxiliar >= 1 && auxiliar <= 6) {
                 if (!sonido) {
                     sonido = true;
                     al_play_sample(apuntado, 4.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -1489,5 +1802,183 @@ void Juego::modo_manual(Jugador &jugador_actual) {
 	}
 	if (jugador_actual.getPuntaje() < 0) jugador_actual.setPuntaje(0);
     delete tablero_inicial, tablero_final;
+    al_destroy_sample(apuntado);
+    al_destroy_sample(musica_juego);
+    al_destroy_sample(avance);
+    al_destroy_sample(deslizar);
+}
+
+//Se genera el menú para la solicitar los puzzles.
+void Juego::capturar_puzzles(Puzzle*& inicio, Puzzle*& meta, ALLEGRO_SAMPLE_ID id) {
+    ALLEGRO_SAMPLE* apuntado = al_load_sample("Sounds/smw_map_move_to_spot.wav");
+    ALLEGRO_SAMPLE* deslizar = al_load_sample("Sounds/smw_fireball.wav");
+    ALLEGRO_SAMPLE* avance = al_load_sample("Sounds/smw_message_block.wav");
+    bool cancelar = false; Puzzle* manejador;
+    vector<Coordenadas> *lista_espacios = new vector<Coordenadas>;
+
+    if (this->dificultad == 3) {
+        inicio = new Puzzle_facil(this->letra, this->pantalla, 3);
+        meta = new Puzzle_facil(this->letra, this->pantalla, 3);
+    }
+    else if (this->dificultad == 4) {
+        inicio = new Puzzle_medio(this->letra, this->pantalla, this->dificultad);
+        meta = new Puzzle_medio(this->letra, this->pantalla, this->dificultad);
+    }
+    else {
+        inicio = new Puzzle_dificil(this->letra, this->pantalla, this->dificultad);
+        meta = new Puzzle_dificil(this->letra, this->pantalla, this->dificultad);
+    }
+
+    for (int i = 0; i < this->dificultad; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
+            inicio[0][i][j] = "0";
+        }
+    }
+
+    for (int i = 0; i < this->dificultad; i++) {
+        for (int j = 0; j < this->dificultad; j++) {
+            meta[0][i][j] = "0";
+        }
+    }
+    int limite = pow(this->dificultad, 2) - 1, puzzle;
+    int conteo = 1, auxiliar;
+
+    while (conteo <= pow(this->dificultad, 2) * 2 - 2 && !cancelar) {
+        int aux;
+
+        if (conteo <= limite) {
+            aux = conteo;
+            puzzle = 1;
+            *lista_espacios = this->lugares_disponibles(inicio, 1);
+        }
+        else {
+            aux = conteo - limite;
+            puzzle = 2;
+            *lista_espacios = this->lugares_disponibles(meta, 2);
+        }
+
+        ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
+        bool continuar = false, reanudar, sonido = false;
+
+        al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
+        al_register_event_source(fila_evento, al_get_mouse_event_source());
+
+        this->imprimir_interfaz_captura(aux, puzzle, inicio, meta);
+        while (!continuar) {
+            ALLEGRO_EVENT evento;
+            al_wait_for_event(fila_evento, &evento);
+
+            switch (evento.type) {
+            case ALLEGRO_EVENT_MOUSE_AXES:
+                this->x = evento.mouse.x;
+                this->y = evento.mouse.y;
+                auxiliar = this->posicionado(*lista_espacios);
+         
+                if (auxiliar >= 1 && auxiliar <= 26) {
+                    if (!sonido) {
+                        sonido = true;
+                        al_play_sample(apuntado, 4.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    }
+                }
+                else {
+                    sonido = false;
+                }
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                if (auxiliar >= 1 && auxiliar <= 25) {
+                    if (puzzle == 1) {
+                        manejador = inicio;
+                    }
+                    else {
+                        manejador = meta;
+                    }
+
+                    switch (auxiliar) {
+                    case 1:  manejador[0][0][0] = to_string(aux); break;  case 14:  manejador[0][2][3] = to_string(aux); break;
+                    case 2:  manejador[0][0][1] = to_string(aux); break;  case 15:  manejador[0][2][4] = to_string(aux); break;
+                    case 3:  manejador[0][0][2] = to_string(aux); break;  case 16:  manejador[0][3][0] = to_string(aux); break;
+                    case 4:  manejador[0][0][3] = to_string(aux); break;  case 17:  manejador[0][3][1] = to_string(aux); break;
+                    case 5:  manejador[0][0][4] = to_string(aux); break;  case 18:  manejador[0][3][2] = to_string(aux); break;
+                    case 6:  manejador[0][1][0] = to_string(aux); break;  case 19:  manejador[0][3][3] = to_string(aux); break;
+                    case 7:  manejador[0][1][1] = to_string(aux); break;  case 20:  manejador[0][3][4] = to_string(aux); break;
+                    case 8:  manejador[0][1][2] = to_string(aux); break;  case 21:  manejador[0][4][0] = to_string(aux); break;
+                    case 9:  manejador[0][1][3] = to_string(aux); break;  case 22:  manejador[0][4][1] = to_string(aux); break;
+                    case 10: manejador[0][1][4] = to_string(aux); break;  case 23:  manejador[0][4][2] = to_string(aux); break;
+                    case 11: manejador[0][2][0] = to_string(aux); break;  case 24:  manejador[0][4][3] = to_string(aux); break;
+                    case 12: manejador[0][2][1] = to_string(aux); break;  case 25:  manejador[0][4][4] = to_string(aux); break;
+                    case 13: manejador[0][2][2] = to_string(aux); break;
+                    }
+                    conteo++;
+                    this->imprimir_interfaz_captura(aux, puzzle, inicio, meta);
+
+                    if (conteo <= pow(this->dificultad, 2) * 2 - 2) {
+                        al_play_sample(deslizar, 2.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    }
+                    else {
+                        al_play_sample(avance, 4.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                        al_rest(0.5);
+                        if (*inicio == *meta) {
+                            al_stop_sample(&id);
+                            inicio[0][0][0] = "e";
+                        }
+                        else if (inicio->resolvible_manual() != meta->resolvible_manual()) {
+                            inicio[0][0][0] = "f";
+                            al_stop_sample(&id);
+                        }
+                        al_clear_to_color(al_map_rgb(0, 0, 0));
+                        al_flip_display();
+                        al_rest(0.5);
+                        continuar = true;
+                        delete lista_espacios;
+                        return;
+                    }
+
+                    delete lista_espacios;
+                    lista_espacios = new vector<Coordenadas>;
+                    continuar = true;
+                }
+                else if (auxiliar == 26) {
+                    al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    inicio[0][0][0] = "d";
+
+                    al_rest(0.5);
+                    al_stop_sample(&id);
+                    al_clear_to_color(al_map_rgb(0, 0, 0));
+                    al_flip_display();
+                    al_rest(0.9);
+                    continuar = true;
+                    return;
+                }
+                break;
+            case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+                reanudar = false;
+                while (!reanudar) {
+                    ALLEGRO_EVENT evento2;
+                    al_wait_for_event(fila_evento, &evento2);
+
+                    if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
+                        this->imprimir_interfaz_captura(aux, puzzle, inicio, meta);
+                        reanudar = true;
+                    }
+                }
+                break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                inicio[0][0][0] = "c";
+                return;
+            }
+        }
+        al_destroy_event_queue(fila_evento);
+    }
+    al_destroy_sample(apuntado);
+    al_destroy_sample(avance);
+    al_destroy_sample(deslizar);
+    delete lista_espacios;
+
+    al_rest(0.5);
+    al_stop_sample(&id);
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_flip_display();
+    al_rest(0.9);
+    return;
 }
 #endif

@@ -7,52 +7,6 @@
 
 //-----Métodos de la clase 'Puzzle'-----//.
 //---Funciones privadas---//.
-//Se imprime la interfaz para la solicitud.
-void Puzzle::imprimir_interfaz_captura(int fila, int columna, int tipo_puzzle) {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-
-    if (tipo_puzzle == 1) al_draw_text(this->letra, al_map_rgb(255, 195, 243), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE INICIAL");
-    else al_draw_text(this->letra, al_map_rgb(166, 226, 255), 400, 40, ALLEGRO_ALIGN_CENTRE, "PUZZLE META");
-    string* auxiliar = new string;
-    *auxiliar = "POSICIONE EL";
-
-    switch (this->contador) {
-    case 0: *auxiliar += " ESPACIO"; break;     case 16: *auxiliar += " NUMERO 16"; break;
-    case 1: *auxiliar += " NUMERO 1"; break;    case 17: *auxiliar += " NUMERO 17"; break;
-    case 2: *auxiliar += " NUMERO 2"; break;    case 18: *auxiliar += " NUMERO 18"; break;
-    case 3: *auxiliar += " NUMERO 3"; break;    case 19: *auxiliar += " NUMERO 19"; break;
-    case 4: *auxiliar += " NUMERO 4"; break;    case 20: *auxiliar += " NUMERO 20"; break;
-    case 5: *auxiliar += " NUMERO 5"; break;    case 21: *auxiliar += " NUMERO 21"; break;
-    case 6: *auxiliar += " NUMERO 6"; break;    case 22: *auxiliar += " NUMERO 22"; break;
-    case 7: *auxiliar += " NUMERO 7"; break;    case 23: *auxiliar += " NUMERO 23"; break;
-    case 8: *auxiliar += " NUMERO 8"; break;    case 24: *auxiliar += " NUMERO 24"; break;
-    case 9: *auxiliar += " NUMERO 9"; break;
-    case 10: *auxiliar += " NUMERO 10"; break;
-    case 11: *auxiliar += " NUMERO 11"; break;
-    case 12: *auxiliar += " NUMERO 12"; break;
-    case 13: *auxiliar += " NUMERO 13"; break;
-    case 14: *auxiliar += " NUMERO 14"; break;
-    case 15: *auxiliar += " NUMERO 15"; break;
-    }
-    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 100, ALLEGRO_ALIGN_CENTRE, auxiliar->c_str());
-    al_draw_rectangle(350, 463, 450, 513, al_map_rgb(255, 184, 166), 5);
-    al_draw_text(this->letra, al_map_rgb(255, 255, 139), 400, 471, ALLEGRO_ALIGN_CENTRE, this->puzzle[0][fila][columna].c_str());
-
-    switch (this->tipo_puzzle) {
-    case 3: al_draw_filled_rectangle(200, 200, 353, 353, al_map_rgb(255, 255, 255)); break;
-    case 4: al_draw_filled_rectangle(200, 200, 403, 403, al_map_rgb(255, 255, 255)); break;
-    case 5: al_draw_filled_rectangle(200, 200, 453, 453, al_map_rgb(255, 255, 255)); break;
-    }
-
-    for (int i = 0; i < this->tipo_puzzle; i++) {
-        for (int j = 0; j < this->tipo_puzzle; j++) {
-            al_draw_filled_rectangle(200 + i * 50 + 3, 200 + j * 50 + 3, 200 + (i + 1) * 50, 200 + (j + 1) * 50, al_map_rgb(25, 177, 201));
-        }
-    }
-    al_flip_display();
-    delete auxiliar;
-}
-
 //Se verifica que el caracter ingresado sea numérico.
 char Puzzle::validar_entrada(ALLEGRO_EVENT evento) {
     char letra;
@@ -136,85 +90,6 @@ Puzzle::~Puzzle() {
 }
 
 //---Métodos---//.
-//Se genera el menú para la solicitud del puzzle.
-void Puzzle::capturaPuzzle() {
-    bool cancelar = false;
-
-    for (int i = 0; i < this->tipo_puzzle && !cancelar; i++) {
-        for (int j = 0; j < this->tipo_puzzle && !cancelar; j++) {
-
-            ALLEGRO_EVENT_QUEUE* fila_evento = al_create_event_queue();
-            bool continuar = false, reanudar, sonido = false;
-
-            al_register_event_source(fila_evento, al_get_display_event_source(pantalla));
-            al_register_event_source(fila_evento, al_get_keyboard_event_source());
-
-            this->imprimir_interfaz_captura(i, j, this->tipo_puzzle); 
-            while (!continuar) {
-                ALLEGRO_EVENT evento;
-                al_wait_for_event(fila_evento, &evento);
-
-                switch (evento.type) {
-                case ALLEGRO_EVENT_KEY_CHAR:
-                    if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                        if (this->puzzle[0][i][j].length() == 0) {
-                            al_show_native_message_box(pantalla, "Advertencia", "Error de formato", "Texto mal introducido", NULL, ALLEGRO_MESSAGEBOX_WARN);
-                        }
-                        else if (!this->entrada_valida(i, j)) {
-                            al_show_native_message_box(pantalla, "Advertencia", "Error de entrada", "Valor repetido/invalidado", NULL, ALLEGRO_MESSAGEBOX_WARN);
-                            this->puzzle[0][i][j].clear();
-                        }
-                        else {
-                            /*al_play_sample(click, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-
-                            al_rest(0.3);
-                            al_clear_to_color(al_map_rgb(0, 0, 0));
-                            al_flip_display();
-                            al_rest(0.3);*/
-                            contador++;
-                            continuar = true;
-                        }
-                    }
-                    else {
-                        char auxiliar = this->validar_entrada(evento);
-                        if (auxiliar != '+' && this->puzzle[0][i][j].length() < 2) {
-                            //al_play_sample(tecla, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-                        }
-                        if (auxiliar != '+' && auxiliar != '-' && this->puzzle[0][i][j].length() < 2) {
-                            this->puzzle[0][i][j].push_back(auxiliar);
-                            this->imprimir_interfaz_captura(i, j, this->tipo_puzzle);
-                        }
-                        if (auxiliar == '-' && this->puzzle[0][i][j].length() > 0) {
-                            this->puzzle[i][j].pop_back();
-                            this->imprimir_interfaz_captura(i, j, this->tipo_puzzle);
-                        }
-                    }
-                    break;
-                case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
-                    reanudar = false;
-                    while (!reanudar) {
-                        ALLEGRO_EVENT evento2;
-                        al_wait_for_event(fila_evento, &evento2);
-
-                        if (evento2.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN) {
-                            this->imprimir_interfaz_captura(i, j, this->tipo_puzzle);
-                            reanudar = true;
-                        }
-                    }
-                    break;
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    puzzle[0][0][0] = "c";
-                    continuar = true;
-                    cancelar = true;
-                    break;
-                }
-            }
-            al_destroy_event_queue(fila_evento);
-        }
-    }
-    return;
-}
-
 //Se genera el puzzle de forma aleatoria.
 void Puzzle::generaPuzzle() {
 	string random;
@@ -335,5 +210,93 @@ void Puzzle::swap(int direccion) {
             }
         }
     }
+}
+
+
+//Se retorna la cantidad de permutaciones del tablero actual.
+int Puzzle::inversiones(int* arreglo) {
+    int inversiones = 0;
+
+    for (int i = 0; i < this->tipo_puzzle * this->tipo_puzzle - 1; i++) {
+        for (int j = i + 1; j < this->tipo_puzzle * this->tipo_puzzle; j++) {
+            if (arreglo[i] && arreglo[j] && arreglo[i] > arreglo[j]) {
+                inversiones++;
+            }
+        }
+    }
+    return inversiones;
+}
+
+//-----Métodos de la clase 'Puzzle_facil'-----//.
+//---Métodos---//.
+//Se verifica si el 8-puzzle puede resolverse con la meta predeterminada.
+bool Puzzle_facil::resolvible_manual() {
+    int inversiones = 0;
+    int* arreglo = new int[9];
+
+    for (int i = 0, contador = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++){
+            arreglo[contador++] = stoi(this->puzzle[0][i][j]);
+        }
+    }
+
+    inversiones = this->inversiones(arreglo);
+    delete arreglo;
+    return inversiones % 2 == 0;
+}
+
+//-----Métodos de la clase 'Puzzle_medio'-----//.
+//---Funciones privadas---//.
+//Se retorna la posición horizontal del espacio.
+int Puzzle_medio::posicion_x_cero() {
+    for (int i = 3; i >= 0; i--) {
+        for (int j = 3; j >= 0; j--) {
+            if (this->puzzle[0][i][j] == "0") {
+                return this->tipo_puzzle - i;
+            }
+        }
+    }
+    return this->tipo_puzzle;
+}
+
+//---Métodos---//.
+//Se verifica si el 15-puzzle puede resolverse con la meta predeterminada.
+bool Puzzle_medio::resolvible_manual() {
+    int inversiones = 0;
+    int* arreglo = new int[16];
+
+    for (int i = 0, contador = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            arreglo[contador++] = stoi(this->puzzle[0][i][j]);
+        }
+    }
+
+    inversiones = this->inversiones(arreglo);
+    delete arreglo;
+
+    if (this->posicion_x_cero() % 2 != 0) {
+        return (inversiones % 2 == 0);
+    }
+    else {
+        return (inversiones % 2 != 0);
+    }
+}
+
+//-----Métodos de la clase 'Puzzle_dificil'-----//.
+//---Métodos---//.
+//Se verifica si el 24-puzzle puede resolverse con la meta predeterminada.
+bool Puzzle_dificil::resolvible_manual() {
+    int inversiones;
+    int* arreglo = new int[25];
+        ;
+    for (int i = 0, contador = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            arreglo[contador++] = stoi(this->puzzle[0][i][j]);
+        }
+    }
+
+    inversiones = this->inversiones(arreglo);
+    delete arreglo;
+    return inversiones % 2 == 0;
 }
 #endif
