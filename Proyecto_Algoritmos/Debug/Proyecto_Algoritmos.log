@@ -1,2 +1,8 @@
-﻿  Sistema.cpp
-  Proyecto_Algoritmos.vcxproj -> C:\Users\compaq\Desktop\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.exe
+﻿  Proyecto_Algoritmos.cpp
+C:\Users\erikg\Desktop\Proyecto Final\Proyecto_Algoritmos\Proyecto_Algoritmos.cpp(25,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Timer.cpp
+  Vector.cpp
+  Generating Code...
+  Sistema.cpp
+  LINK : C:\Users\erikg\Desktop\Proyecto Final\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.exe not found or not built by the last incremental link; performing full link
+  Proyecto_Algoritmos.vcxproj -> C:\Users\erikg\Desktop\Proyecto Final\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.exe

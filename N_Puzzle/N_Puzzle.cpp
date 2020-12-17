@@ -116,6 +116,8 @@ int main() {
                                             }
                                         }
                                         else {
+                                            inicio->imprimePuzzle();
+                                            al_rest(30);
                                             //Colocar Branch and Bound.
                                             al_stop_sample(&id2);
                                             if (!juego.pantalla_fin_simulacion(1)) {

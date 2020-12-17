@@ -15,13 +15,19 @@ bool ordenamiento_descendente(Jugador a, Jugador b) {
 //Se imprime la interfaz de la pantalla de título.
 void Juego::imprimir_interfaz_titulo() {
     this->contador++;
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_filled_rectangle(100, 50, 700, 170, al_map_rgb(255, 255, 255));
+    ALLEGRO_BITMAP* icono_titulo = al_load_bitmap("Sources/titulo.png");
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
 
-    al_draw_filled_rectangle(140, 230, 240, 330, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(320, 250, 380, 310, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(460, 250, 520, 310, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(600, 250, 660, 310, al_map_rgb(255, 255, 255));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_bitmap(icono_titulo, 100, 50, NULL); 
+
+    al_draw_bitmap(cubo4, 140, 230, NULL); 
+    al_draw_bitmap(cubo1, 320, 250, NULL);
+    al_draw_bitmap(cubo2, 460, 250, NULL);
+    al_draw_bitmap(cubo3, 600, 250, NULL);
 
     if (this->contador == 55) {
         if (this->parpadeo) {
@@ -34,6 +40,9 @@ void Juego::imprimir_interfaz_titulo() {
     }
     if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
+    al_destroy_bitmap(icono_titulo);
+    al_destroy_bitmap(cubo1);  al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3);  al_destroy_bitmap(cubo4);
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
@@ -47,13 +56,18 @@ int Juego::posicionado_menu() {
 //Se imprime la interfaz del menú principal.
 void Juego::imprimir_interfaz_menu() {
     this->contador++;
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_filled_rectangle(200, 60, 600, 120, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(250, 180, 550, 240, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(320, 300, 481, 360, al_map_rgb(255, 255, 255));
+    ALLEGRO_BITMAP* iniciar_juego = al_load_bitmap("Sources/iniciarjuego.png");
+    ALLEGRO_BITMAP* records = al_load_bitmap("Sources/Records.png");
+    ALLEGRO_BITMAP* salir = al_load_bitmap("Sources/salir.png");
+    ALLEGRO_BITMAP* cubo = al_load_bitmap("Sources/Cubo grande.png");
 
-    al_draw_filled_rectangle(50, 210, 150, 310, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(650, 210, 750, 310, al_map_rgb(255, 255, 255));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_bitmap(iniciar_juego, 200, 60, NULL);
+    al_draw_bitmap(records, 250, 180, NULL);
+    al_draw_bitmap(salir, 320, 300, NULL);
+
+    al_draw_bitmap(cubo, 50, 210, NULL);
+    al_draw_bitmap(cubo, 650, 210, NULL);
 
     if (this->contador == 55) {
         if (this->parpadeo) {
@@ -65,57 +79,70 @@ void Juego::imprimir_interfaz_menu() {
         this->contador = 0;
     }
     if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(220, 220, 220), 400, 430, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UNA OPCION");
+    al_destroy_bitmap(iniciar_juego);  al_destroy_bitmap(records);
+    al_destroy_bitmap(salir);  al_destroy_bitmap(cubo);
     al_flip_display();
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
 int Juego::posicionado_menu_Dificultad() {
-    if (this->x >= 300 && this->x <= 500 && this->y >= 150 && this->y <= 210) return 1;
-    else if (this->x >= 290 && this->x <= 510 && this->y >= 280 && this->y <= 340) return 2;
-    else if (this->x >= 280 && this->x <= 520 && this->y >= 410 && this->y <= 470) return 3;
-    else if (this->x >= 64 && this->x <= 122 && this->y >= 409 && this->y <= 471) return 4;
+    if (this->x >= 330 && this->x <= 479 && this->y >= 150 && this->y <= 210) return 1;
+    else if (this->x >= 325 && this->x <= 478 && this->y >= 280 && this->y <= 340) return 2;
+    else if (this->x >= 320 && this->x <= 486 && this->y >= 410 && this->y <= 470) return 3;
+    else if (this->x >= 64 && this->x <= 122 && this->y >= 410 && this->y <= 466) return 4;
     else return 5;
 }
 
 //Se imprime la interfaz del selector de dificultad.
 void Juego::imprimir_interfaz_menu_Dificultad() {
+    ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/iconoregresar.png");
+    ALLEGRO_BITMAP* facil = al_load_bitmap("Sources/iconofacil.png");
+    ALLEGRO_BITMAP* medio = al_load_bitmap("Sources/icono media.png");
+    ALLEGRO_BITMAP* dificil = al_load_bitmap("Sources/icono dificil.png");
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
     al_draw_text(this->letra, al_map_rgb(189, 252, 166), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE LA DIFICULTAD");
 
-    al_draw_filled_rectangle(300, 150, 500, 210, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(290, 280, 510, 340, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(280, 410, 520, 470, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(65, 410, 121, 470, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(facil, 330, 150, NULL);
+    al_draw_bitmap(medio, 325, 280, NULL);
+    al_draw_bitmap(dificil, 320, 410, NULL);
+    al_draw_bitmap(regresar, 65, 410, NULL);
 
     al_flip_display();
+    al_destroy_bitmap(regresar); al_destroy_bitmap(facil);
+    al_destroy_bitmap(medio); al_destroy_bitmap(dificil);
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
 int Juego::posicionado_menu_Modo() {
-    if (this->x >= 290 && this->x <= 510 && this->y >= 200 && this->y <= 260) return 1;
-    else if (this->x >= 270 && this->x <= 530 && this->y >= 360 && this->y <= 420) return 2;
-    else if (this->x >= 65 && this->x <= 121 && this->y >= 360 && this->y <= 420) return 3;
+    if (this->x >= 298 && this->x <= 502 && this->y >= 200 && this->y <= 260) return 1;
+    else if (this->x >= 250 && this->x <= 555 && this->y >= 360 && this->y <= 420) return 2;
+    else if (this->x >= 55 && this->x <= 111 && this->y >= 365 && this->y <= 421) return 3;
     else return 4;
 }
 
 //Se imprime la interfaz del selector de modo.
 void Juego::imprimir_interfaz_menu_Modo() {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
+    ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/iconoregresar.png");
+    ALLEGRO_BITMAP* automatico = al_load_bitmap("Sources/Automatico.png");
+    ALLEGRO_BITMAP* manual = al_load_bitmap("Sources/icono manual.png");
 
+    al_clear_to_color(al_map_rgb(0, 0, 0));
     al_draw_text(this->letra, al_map_rgb(216, 227, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SELECCIONE EL MODO");
 
-    al_draw_filled_rectangle(290, 200, 510, 260, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(270, 360, 530, 420, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(65, 360, 121, 420, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(manual, 298, 200, NULL);
+    al_draw_bitmap(automatico, 250, 360, NULL);
+    al_draw_bitmap(regresar, 55, 365, NULL);
 
     al_flip_display();
+    al_destroy_bitmap(regresar); al_destroy_bitmap(manual);
+    al_destroy_bitmap(automatico);
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
 int Juego::posicionado_Records() {
-    if (this->x >= 65 && this->x <= 121 && this->y >= 468 && this->y <= 525) return 1;
-    else if (this->x >= 360 && this->x <= 710 && this->y >= 468 && this->y <= 525) return 2;
+    if (this->x >= 65 && this->x <= 121 && this->y >= 458 && this->y <= 515) return 1;
+    else if (this->x >= 400 && this->x <= 750 && this->y >= 458 && this->y <= 515) return 2;
     else return 3;
 }
 
@@ -123,6 +150,8 @@ int Juego::posicionado_Records() {
 void Juego::imprimir_interfaz_Records() {
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
+    ALLEGRO_BITMAP* regresar1 = al_load_bitmap("Sources/iconoregresar.png");
+    ALLEGRO_BITMAP* eliminar1 = al_load_bitmap("Sources/Borrar registro.png");
     ALLEGRO_FONT* titulo = al_load_font("Fonts/slkscre.ttf", 35, NULL);
     ALLEGRO_FONT* letra = al_load_font("Fonts/slkscre.ttf", 25, NULL);
 
@@ -137,37 +166,53 @@ void Juego::imprimir_interfaz_Records() {
     al_draw_text(letra, al_map_rgb(204, 255, 255), 86, 395, ALLEGRO_ALIGN_CENTRE, "7.-");
     this->mostrar_registro();
 
-    al_draw_filled_rectangle(65, 458, 121, 515, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(360, 458, 710, 515, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(regresar1, 65, 458, NULL);
+    al_draw_bitmap(eliminar1, 400, 458, NULL);
     al_flip_display();
 
     al_destroy_font(titulo); al_destroy_font(letra);
+    al_destroy_bitmap(regresar1); al_destroy_bitmap(eliminar1);
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
 int Juego::posicionado_confirmacion() {
     if (this->x >= 270 && this->x <= 530 && this->y >= 200 && this->y <= 260) return 1;
-    else if (this->x >= 270 && this->x <= 530 && this->y >= 360 && this->y <= 420) return 2;
+    else if (this->x >= 285 && this->x <= 518 && this->y >= 360 && this->y <= 420) return 2;
     else return 3;
 }
 
 //Se imprime la interfaz de la pantalla para confirmar la eliminación del registro.
 void Juego::imprimir_interfaz_confirmacion() {
+    ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/icono regresar.png");
+    ALLEGRO_BITMAP* eliminar = al_load_bitmap("Sources/icono eliminar.png");
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
     al_draw_text(this->letra, al_map_rgb(247, 188, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "CONFIRME LA ELIMINACION");
     al_draw_text(this->letra, al_map_rgb(247, 188, 255), 400, 100, ALLEGRO_ALIGN_CENTRE, "DEL REGISTRO");
-    al_draw_filled_rectangle(270, 200, 530, 260, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(270, 360, 530, 420, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(regresar, 270, 200, NULL);
+    al_draw_bitmap(eliminar, 285, 360, NULL);
 
     al_flip_display();
+    al_destroy_bitmap(regresar); al_destroy_bitmap(eliminar);
 }
 
 //Se imprime la intefaz de eliminación.
 void Juego::imprimir_interfaz_eliminacion() {
     this->contador++;
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
+
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "REGISTRO BORRADO");
+
+    al_draw_bitmap(cubo4, 50, 200, NULL);
+    al_draw_bitmap(cubo1, 210, 170, NULL);
+    al_draw_bitmap(cubo2, 330, 260, NULL);
+    al_draw_bitmap(cubo3, 450, 170, NULL);
+    al_draw_bitmap(cubo1, 570, 260, NULL);
+    al_draw_bitmap(cubo2, 690, 170, NULL);
 
     if (this->contador == 55) {
         if (this->parpadeo) {
@@ -180,13 +225,27 @@ void Juego::imprimir_interfaz_eliminacion() {
     }
     if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
+    al_destroy_bitmap(cubo1); al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
 }
 
 //Se imprime la interfaz de la pantalla de salida.
 void Juego::imprimir_interfaz_salida() {
     this->contador++;
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
+
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "GRACIAS POR JUGAR :)");
+
+    al_draw_bitmap(cubo4, 50, 200, NULL);
+    al_draw_bitmap(cubo1, 210, 170, NULL);
+    al_draw_bitmap(cubo2, 330, 260, NULL);
+    al_draw_bitmap(cubo3, 450, 170, NULL);
+    al_draw_bitmap(cubo1, 570, 260, NULL);
+    al_draw_bitmap(cubo2, 690, 170, NULL);
 
     if (this->contador == 55) {
         if (this->parpadeo) {
@@ -199,6 +258,8 @@ void Juego::imprimir_interfaz_salida() {
     }
     if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
+    al_destroy_bitmap(cubo1); al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
 }
 
 //Se imprime la interfaz del menú de finalización.
@@ -228,6 +289,10 @@ void Juego::imprimir_interfaz_finJuego(Jugador jugador_actual) {
 //Se imprime la interfaz del menú para el fin de la simulación.
 void Juego::imprimir_fin_simulacion(int parametro) {
     this->contador++;
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
     if (parametro == 1) {
@@ -240,6 +305,13 @@ void Juego::imprimir_fin_simulacion(int parametro) {
         al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLES IGUALES");
     }
 
+    al_draw_bitmap(cubo4, 50, 200, NULL);
+    al_draw_bitmap(cubo1, 210, 170, NULL);
+    al_draw_bitmap(cubo2, 330, 260, NULL);
+    al_draw_bitmap(cubo3, 450, 170, NULL);
+    al_draw_bitmap(cubo1, 570, 260, NULL);
+    al_draw_bitmap(cubo2, 690, 170, NULL);
+
     if (this->contador == 55) {
         if (this->parpadeo) {
             this->parpadeo = false;
@@ -251,6 +323,8 @@ void Juego::imprimir_fin_simulacion(int parametro) {
     }
     if (this->parpadeo) al_draw_text(this->letra, al_map_rgb(228, 255, 152), 403, 400, ALLEGRO_ALIGN_CENTRE, "PRESIONE ENTER");
     al_flip_display();
+    al_destroy_bitmap(cubo1); al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
 }
 
 //Se determina en cuál ícono se ha posicionado el cursor.
@@ -260,7 +334,8 @@ int Juego::posicionado_modo_manual(vector<Par_coordenadas> parametros) {
             return it.posicion;
         }
     }
-    if (this->x >= 470 && this->x <= 750 && this->y >= 460 && this->y <= 520) return 6;
+    if (this->x >= 50 && this->x <= 280 && this->y >= 460 && this->y <= 520) return 5;
+    else if (this->x >= 480 && this->x <= 741 && this->y >= 460 && this->y <= 520) return 6;
     else return 7;
 }
 
@@ -273,6 +348,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
     ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
     ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
+    ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/icono regresar.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
     for (int i = 1; i < 25; i++) {
@@ -318,7 +394,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     }
 
     al_draw_filled_rectangle(50, 460, 280, 520, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(470, 460, 750, 520, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(regresar, 480, 460, NULL);
 
     for (int i = 0; i < this->getDificultad(); i++) {
         for (int j = 0; j < this->getDificultad(); j++) {
@@ -351,6 +427,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     al_flip_display();
     al_destroy_font(letra); al_destroy_font(letra1); al_destroy_font(letra2);
     al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4); al_destroy_bitmap(puzzle_5x5);
+    al_destroy_bitmap(regresar);
     delete fichas;
 }
 
@@ -362,6 +439,7 @@ void Juego::imprimir_interfaz_captura(int conteo, int tipo_puzzle, Puzzle *inici
     ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
     ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
     ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
+    ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/icono regresar.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
     for (int i = 1; i < 25; i++) {
@@ -416,8 +494,7 @@ void Juego::imprimir_interfaz_captura(int conteo, int tipo_puzzle, Puzzle *inici
         al_draw_bitmap(puzzle_5x5, 444, 160, NULL);
         break;
     }
-
-    al_draw_filled_rectangle(260, 460, 540, 520, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(regresar, 270, 460, NULL);
 
     for (int i = 0; i < this->getDificultad(); i++) {
         for (int j = 0; j < this->getDificultad(); j++) {
@@ -450,6 +527,7 @@ void Juego::imprimir_interfaz_captura(int conteo, int tipo_puzzle, Puzzle *inici
     al_flip_display();
     al_destroy_font(letra); al_destroy_font(letra1); al_destroy_font(letra2);
     al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4); al_destroy_bitmap(puzzle_5x5);
+    al_destroy_bitmap(regresar);
     delete auxiliar;
 }
 
@@ -1175,10 +1253,14 @@ int Juego::pantalla_menu_Modo(ALLEGRO_SAMPLE_ID id1) {
                 al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
                 al_rest(0.5);
-                if(auxiliar != 3) al_stop_sample(&id1);
+                if (auxiliar != 3) al_stop_sample(&id1);
+
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_flip_display();
-                al_rest(0.9);
+
+                if (auxiliar != 3) al_rest(0.9);
+                else al_rest(0.5);
+
                 retorno = auxiliar;
                 continuar = true;
             }
@@ -1674,6 +1756,10 @@ void Juego::modo_manual(Jugador &jugador_actual) {
 
                 al_play_sample(deslizar, 2.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
             }
+            else if (auxiliar == 5) {
+                //tablero_inicial->sugerir_movimiento();
+                //veces_ayuda++;
+            }
             else if (auxiliar == 6) {
                 al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 
@@ -1731,69 +1817,51 @@ void Juego::modo_manual(Jugador &jugador_actual) {
 
 	switch (dificultad) {
 	case 3:
-		if (this->tiempo < 60) {
-			jugador_actual.setPuntaje(10000 - 50 * veces_ayuda);
+		if (this->tiempo < 300) {
+			jugador_actual.setPuntaje(10000 - 5 * veces_ayuda);
 		}
-		else if (this->tiempo < 120) {
-			jugador_actual.setPuntaje(5000 - 50 * veces_ayuda);
+		else if (this->tiempo < 600) {
+			jugador_actual.setPuntaje(5000 - 5 * veces_ayuda);
 		}
-		else if (this->tiempo < 180) {
-			jugador_actual.setPuntaje(2500 - 50 * veces_ayuda);
+		else if (this->tiempo < 900) {
+			jugador_actual.setPuntaje(2500 - 5 * veces_ayuda);
 		}
-		else if (this->tiempo < 240) {
-			jugador_actual.setPuntaje(1250 - 50 * veces_ayuda);
+		else if (this->tiempo < 1200) {
+			jugador_actual.setPuntaje(1250 - 5 * veces_ayuda);
 		}
 		else {
 			jugador_actual.setPuntaje(0);
 		}
 		break;
 	case 4:
-		if (this->tiempo < 60) {
-			jugador_actual.setPuntaje(30000 - 50 * veces_ayuda);
+		if (this->tiempo < 420) {
+			jugador_actual.setPuntaje(30000 - 3 * veces_ayuda);
 		}
-		else if (this->tiempo < 120) {
-			jugador_actual.setPuntaje(15000 - 50 * veces_ayuda);
+		else if (this->tiempo < 840) {
+			jugador_actual.setPuntaje(15000 - 3 * veces_ayuda);
 		}
-		else if (this->tiempo < 180) {
-			jugador_actual.setPuntaje(7500 - 50 * veces_ayuda);
+		else if (this->tiempo < 1260) {
+			jugador_actual.setPuntaje(7500 - 3 * veces_ayuda);
 		}
-		else if (this->tiempo < 240) {
-			jugador_actual.setPuntaje(3750 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 300) {
-			jugador_actual.setPuntaje(1875 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 360) {
-			jugador_actual.setPuntaje(937 - 50 * veces_ayuda);
+		else if (this->tiempo < 1680) {
+			jugador_actual.setPuntaje(3750 - 3 * veces_ayuda);
 		}
 		else {
 			jugador_actual.setPuntaje(0);
 		}
 		break;
 	case 5:
-		if (this->tiempo < 60) {
-			jugador_actual.setPuntaje(60000 - 50 * veces_ayuda);
+		if (this->tiempo < 540) {
+			jugador_actual.setPuntaje(60000 - 2 * veces_ayuda);
 		}
-		else if (this->tiempo < 120) {
-			jugador_actual.setPuntaje(40000 - 50 * veces_ayuda);
+		else if (this->tiempo < 1080) {
+			jugador_actual.setPuntaje(40000 - 2 * veces_ayuda);
 		}
-		else if (this->tiempo < 180) {
-			jugador_actual.setPuntaje(30000 - 50 * veces_ayuda);
+		else if (this->tiempo < 1620) {
+			jugador_actual.setPuntaje(30000 - 2 * veces_ayuda);
 		}
-		else if (this->tiempo < 240) {
-			jugador_actual.setPuntaje(10000 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 300) {
-			jugador_actual.setPuntaje(8000 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 360) {
-			jugador_actual.setPuntaje(4000 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 420) {
-			jugador_actual.setPuntaje(2000 - 50 * veces_ayuda);
-		}
-		else if (this->tiempo < 480) {
-			jugador_actual.setPuntaje(1000 - 50 * veces_ayuda);
+		else if (this->tiempo < 2160) {
+			jugador_actual.setPuntaje(10000 - 2 * veces_ayuda);
 		}
 		else {
 			jugador_actual.setPuntaje(0);

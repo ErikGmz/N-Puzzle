@@ -30,7 +30,8 @@ protected:
     bool entrada_valida(int, int); //Se verifica si la entrada actual es repetida/válida o no.
     int calculaCosto(vector<vector<string>>&, vector<vector<string>>&); //Se calcula el costo que requiere resolver un puzzle inicial a uno meta.
     bool esCoordenada(int, int); //Se verifica si dos elementos, según el tamaño del puzzle.
-    void imprimeRuta(Nodo*); //Se imprime la ruta más optima para resolver el puzzle.
+    void imprimeRuta(Nodo*); //Se imprime la ruta más optima para resolver el puzzle. 
+    int convertir_string(string); //Se convierte un string a un valor numérico.  
 public:
     //---Constructor y destructor---//.
     Puzzle(ALLEGRO_FONT*, ALLEGRO_DISPLAY*, int); //Constructor con argumentos.
@@ -38,13 +39,13 @@ public:
 
     //---Métodos---//.
     void generaPuzzle(); //Se genera el puzzle de forma aleatoria.
-    //void imprimePuzzle(); //Se imprime el puzzle en pantalla.
     void resuelve(int, int, vector<vector<string>> &); //Si tiene solución, se resuelve el puzzle por medio del algoritmo branch and bound.
     bool operator==(Puzzle &); //Se compara si ambos puzzles son exactamente iguales.
     vector<string> &operator[](int); //Se retorna un vector relacionado con el tablero.
     void swap(int); //Se intercambian dos valores dentro del tablero.
     int inversiones(int *); //Se retorna la cantidad de permutaciones del tablero actual.
     virtual bool resolvible_manual() { return true; } //Se verifica si el puzzle puede resolverse con la meta predeterminada.
+    void imprimePuzzle(); //Se imprime el contenido del puzzle.
 };
 
 //-----Clase 'Puzzle_facil', hija de 'Puzzle'-----//.

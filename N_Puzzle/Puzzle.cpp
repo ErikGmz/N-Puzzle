@@ -70,8 +70,21 @@ void Puzzle::imprimeRuta(Nodo* raiz) {
     if (raiz == NULL)
         return;
     this->imprimeRuta(raiz->padre);
-    //this->imprimePuzzle();
+    this->imprimePuzzle();
     cout << endl;
+}
+
+//Se convierte un string a un valor numérico.  
+int Puzzle::convertir_string(string valor) {
+    if (valor == "1") return 0;         else if (valor == "2") return 1;    else if (valor == "3") return 2;
+    else if (valor == "4") return 3;    else if (valor == "5") return 4;    else if (valor == "6") return 5;
+    else if (valor == "7") return 6;    else if (valor == "8") return 7;    else if (valor == "9") return 8;
+    else if (valor == "10") return 9;   else if (valor == "11") return 10;  else if (valor == "12") return 11;
+    else if (valor == "13") return 12;  else if (valor == "14") return 13;  else if (valor == "15") return 14;
+    else if (valor == "16") return 15;  else if (valor == "17") return 16;  else if (valor == "18") return 17;
+    else if (valor == "19") return 18;  else if (valor == "20") return 19;  else if (valor == "21") return 20;
+    else if (valor == "22") return 21;  else if (valor == "23") return 22;  else if (valor == "24") return 23;
+    else return 0;
 }
 
 //---Constructor y destructor---//.
@@ -129,7 +142,7 @@ void Puzzle::resuelve(int x,int y, vector<vector<string>> &puzzle_final) {
     priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; 
 
     // Creamos un nuevo nodo y calculamos su costo.
-    Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL); 
+    Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL);  
 
     raiz->costo = this->calculaCosto(*(this->puzzle), puzzle_final); 
     // Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
@@ -225,6 +238,66 @@ int Puzzle::inversiones(int* arreglo) {
         }
     }
     return inversiones;
+}
+
+//Se imprime el contenido del puzzle.
+void Puzzle::imprimePuzzle() {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_flip_display();
+
+    ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
+    ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
+    ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
+
+    vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
+    for (int i = 1; i < 25; i++) {
+        string aux = "Sources/Fichas/F";
+        ALLEGRO_BITMAP* elemento = al_load_bitmap((aux + to_string(i) + ".png").c_str());
+        fichas->push_back(elemento);
+    }
+    al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "RESOLVIENDO PUZZLE...");
+
+    al_draw_bitmap(cubo4, 50, 415, NULL);
+    al_draw_bitmap(cubo1, 210, 435, NULL);
+    al_draw_bitmap(cubo2, 330, 435, NULL);
+    al_draw_bitmap(cubo3, 450, 435, NULL);
+    al_draw_bitmap(cubo1, 570, 435, NULL);
+    al_draw_bitmap(cubo2, 690, 435, NULL);
+
+    switch (this->tipo_puzzle) {
+    case 3:
+        al_draw_bitmap(puzzle_3x3, 319, 180, NULL);
+        break;
+    case 4:
+        al_draw_bitmap(puzzle_4x4, 293, 150, NULL);
+        break;
+    case 5:
+        al_draw_bitmap(puzzle_5x5, 266, 120, NULL);
+        break;
+    }
+
+    for (int i = 0; i < this->tipo_puzzle; i++) {
+        for (int j = 0; j < this->tipo_puzzle; j++) {
+            if (this->puzzle[0][i][j] != "0") {
+                int auxiliar2 = this->convertir_string(this->puzzle[0][i][j]);
+
+                switch (this->tipo_puzzle) {
+                case 3: al_draw_bitmap(fichas[0][auxiliar2], 319 + j * 53 + 3, 180 + i * 53 + 3, NULL); break;
+                case 4: al_draw_bitmap(fichas[0][auxiliar2], 293 + j * 53 + 3, 150 + i * 53 + 3, NULL); break;
+                case 5: al_draw_bitmap(fichas[0][auxiliar2], 266 + j * 53 + 3, 120 + i * 53 + 3, NULL); break;
+                }
+            }
+        }
+    }
+    al_flip_display();
+    al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4);
+    al_destroy_bitmap(puzzle_5x5); al_destroy_bitmap(cubo1);
+    al_destroy_bitmap(cubo2); al_destroy_bitmap(cubo3);
+    al_destroy_bitmap(cubo4); delete fichas;
 }
 
 //-----Métodos de la clase 'Puzzle_facil'-----//.

@@ -23,5 +23,4 @@ private:
     //---Métodos---//.
     void swap(string &,string &); //Se intercambian los valores de la matriz.
 };
-
 #endif

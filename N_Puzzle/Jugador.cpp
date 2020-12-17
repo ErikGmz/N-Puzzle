@@ -9,19 +9,25 @@
 //---Funciones privadas---//.
 //Se imprime la interfaz para la solicitud de nombres.
 void Jugador::imprimir_interfaz_capturaNombre() {
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
     al_clear_to_color(al_map_rgb(0, 0, 0));
+
     al_draw_text(this->letra, al_map_rgb(255, 255, 139), 400, 50, ALLEGRO_ALIGN_CENTRE, "INGRESE SU NOMBRE");
     al_draw_text(this->letra, al_map_rgb(191, 253, 253), 400, 161, ALLEGRO_ALIGN_CENTRE, this->nombre.c_str());
-
     al_draw_rectangle(260, 153, 540, 203, al_map_rgb(193, 255, 163), 5);
-    al_draw_filled_rectangle(50, 330, 150, 430, al_map_rgb(255, 255, 255));
 
-    al_draw_filled_rectangle(210, 300, 270, 360, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(330, 390, 390, 450, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(450, 300, 510, 360, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(570, 390, 630, 450, al_map_rgb(255, 255, 255));
-    al_draw_filled_rectangle(690, 300, 750, 360, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(cubo4, 50, 330, NULL);
+    al_draw_bitmap(cubo1, 210, 300, NULL);
+    al_draw_bitmap(cubo2, 330, 390, NULL);
+    al_draw_bitmap(cubo3, 450, 300, NULL);
+    al_draw_bitmap(cubo1, 570, 390, NULL);
+    al_draw_bitmap(cubo2, 690, 300, NULL);
     al_flip_display();
+    al_destroy_bitmap(cubo1); al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
     return;
 }
 
