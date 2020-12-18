@@ -334,7 +334,7 @@ int Juego::posicionado_modo_manual(vector<Par_coordenadas> parametros) {
             return it.posicion;
         }
     }
-    if (this->x >= 50 && this->x <= 280 && this->y >= 460 && this->y <= 520) return 5;
+    if (this->x >= 50 && this->x <= 310 && this->y >= 460 && this->y <= 520) return 5;
     else if (this->x >= 480 && this->x <= 741 && this->y >= 460 && this->y <= 520) return 6;
     else return 7;
 }
@@ -348,6 +348,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
     ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
     ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
+    ALLEGRO_BITMAP* sugerencia = al_load_bitmap("Sources/icono sugerencia.png");
     ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/icono regresar.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
@@ -393,7 +394,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
         break;
     }
 
-    al_draw_filled_rectangle(50, 460, 280, 520, al_map_rgb(255, 255, 255));
+    al_draw_bitmap(sugerencia, 50, 460, NULL);
     al_draw_bitmap(regresar, 480, 460, NULL);
 
     for (int i = 0; i < this->getDificultad(); i++) {
@@ -427,7 +428,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     al_flip_display();
     al_destroy_font(letra); al_destroy_font(letra1); al_destroy_font(letra2);
     al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4); al_destroy_bitmap(puzzle_5x5);
-    al_destroy_bitmap(regresar);
+    al_destroy_bitmap(regresar); al_destroy_bitmap(sugerencia);
     delete fichas;
 }
 
