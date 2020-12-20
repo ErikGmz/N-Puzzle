@@ -11,28 +11,28 @@
 enum valores {
     v1 = 0, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13,
     v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24 
-};
+}; //Se establecen los valores numéricos de las fichas.
 
 enum direcciones {
     up = 1, down, leftt, rightt
-};
+}; //Direcciones para el movimiento de las fichas.
 
 //-----Estructuras-----//.
 struct Datos_Guardar {
     char nombre[50];
     int puntaje;
     char fecha[40];
-};
+}; //Datos del jugador.
 
 struct Par_coordenadas {
     int x_inicial, y_inicial, x_final, y_final;
     direcciones posicion;
-};
+}; //Datos para verificar el cálculo de coordenadas.
 
 struct Coordenadas {
     int x_inicial, y_inicial, x_final, y_final;
     int posicion;
-};
+};  //Datos verificar posiciones.
 
 //-----Prototipos de funciones-----//.
 //Se genera el ordenamiento descendente para ordenar jugadores.

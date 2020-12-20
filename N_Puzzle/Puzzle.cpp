@@ -60,17 +60,17 @@ int Puzzle::calcula_Costo(vector<vector<string>>& puzzle_inicial, vector<vector<
     return costo;
 }
 
-//Se verifica si dos elementos, según el tamaño del puzzle.
+//Se verifica si dos elementos son contiguos, según el tamaño del puzzle.
 bool Puzzle::esCoordenada(int x, int y) {
     return ((x >= 0 && x < this->tipo_puzzle) && (y >= 0 && y < this->tipo_puzzle));
 }
 
 //Se imprime la ruta más optima para resolver el puzzle.
-void Puzzle::muestra_Solucion(Nodo* raiz) {
-    if (raiz == NULL)
-        return;
-    this->muestra_Solucion(raiz->padre);
+void Puzzle::muestra_Solucion(Nodo* raiz, ALLEGRO_SAMPLE* deslizar) {
+    if (raiz == NULL) return;
+    this->muestra_Solucion(raiz->padre, deslizar);
     this->imprime_Puzzle(&(raiz->mat));
+    al_play_sample(deslizar, 2.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
     al_rest(1);
 }
 
@@ -127,7 +127,7 @@ void Puzzle::generaPuzzle() {
             this->puzzle[0][i][j] = num_aleatorios->back();
             num_aleatorios->pop_back();
         }
-    }
+    } //Se genera el puzzle con fichas aleatorias y únicas.
     delete num_aleatorios;
 	return;
 }
@@ -135,13 +135,15 @@ void Puzzle::generaPuzzle() {
 //Devuelve el espacio vacio del puzzle.
 Espacio Puzzle::getEspacioVacio() {
     Espacio espacio_vacio;
-    for (int i = 0; i < this->tipo_puzzle; i++)
-        for (int j = 0; j < this->tipo_puzzle; j++)
+    for (int i = 0; i < this->tipo_puzzle; i++) {
+        for (int j = 0; j < this->tipo_puzzle; j++) {
             if (this->puzzle[0][i][j] == "0") {
                 espacio_vacio.x = i;
                 espacio_vacio.y = j;
                 break;
             }
+        }
+    } //Se determina la posición matricial del espacio.
     return espacio_vacio;
 }
 
@@ -152,31 +154,42 @@ bool Puzzle::resuelve(Puzzle *puzzle_final) {
     int fil[] = { 1, 0, -1, 0 };
     int col[] = { 0, -1, 0, 1 };
 
+    ALLEGRO_SAMPLE* deslizar = al_load_sample("Sounds/smw_fireball.wav");
+
     // Coordenadas del espacio vacio del puzzle.
     Espacio espacio_vacio = this->getEspacioVacio();
     int x = espacio_vacio.x;
     int y = espacio_vacio.y;
 
-    priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
+    priority_queue<Nodo*, vector<Nodo*>, comp> *nodosVivos = new priority_queue<Nodo*, vector<Nodo*>, comp>; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
 
     // Creamos un nuevo nodo y calculamos su costo.
     Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL);  
     raiz->costo = this->calcula_Costo(*(this->puzzle), *(puzzle_final->puzzle)); 
 
-    nodosVivos.push(raiz);// Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
+    nodosVivos->push(raiz);// Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
  
     // Buscamos el nodo vivo de menor costo, agregamos a sus hijos a la lista de nodos vivos y lo eliminamos de la lista.
     this->pantalla_solucion();
-    while (!nodosVivos.empty()) {
-        Nodo* min = nodosVivos.top(); //Extraemos el nodo vivo con menor costo estimado.
-        nodosVivos.pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
+    while (!nodosVivos->empty()) {
+        Nodo* min = nodosVivos->top(); //Extraemos el nodo vivo con menor costo estimado.
+        nodosVivos->pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
 
         if (min->costo == 0 || min->nivel >= 30) { // Si el nodo extraido es un nodo solucion.
-            this->muestra_Solucion(min);
+            this->muestra_Solucion(min, deslizar);
+            al_destroy_sample(deslizar);
             if (min->costo == 0)
                 this->pantalla_puzzleResuelto(min, 1);
             else
                 this->pantalla_puzzleResuelto(min, 2);
+
+            delete min;
+            while (!nodosVivos->empty()) {
+                min = nodosVivos->top();
+                nodosVivos->pop();
+                delete min;
+            }
+            delete raiz;
             return true;
         } 
 
@@ -189,16 +202,17 @@ bool Puzzle::resuelve(Puzzle *puzzle_final) {
                         delete hijo;
                     else {
                         hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
-                        nodosVivos.push(hijo);
+                        nodosVivos->push(hijo);
                     }
                 }
                 else {
                     hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
-                    nodosVivos.push(hijo);
+                    nodosVivos->push(hijo);
                 }
             }
         }
     } 
+    return false;
 }
 
 //Realiza un movimiento en el puzzle que acerca al usuario a la solución.
@@ -213,30 +227,34 @@ void Puzzle::sugerir_movimiento(Puzzle* puzzle_final) {
     int x = espacio_vacio.x;
     int y = espacio_vacio.y;
 
-    priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
+    priority_queue<Nodo*, vector<Nodo*>, comp> *nodosVivos = new priority_queue<Nodo*, vector<Nodo*>, comp>; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
 
     // Creamos un nuevo nodo y calculamos su costo.
     Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL);
     raiz->costo = this->calcula_Costo(*(this->puzzle), *(puzzle_final->puzzle));
-    nodosVivos.push(raiz); // Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
+    nodosVivos->push(raiz); // Agregamos la raiz a la cola de prioridad (lista de nodos vivos).
 
-    Nodo* min = nodosVivos.top(); //Extraemos el nodo vivo con menor costo estimado.
-    nodosVivos.pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
+    Nodo* min = nodosVivos->top(); //Extraemos el nodo vivo con menor costo estimado.
+    nodosVivos->pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
 
     //Generamos todos los nodos hijo del elemento extraido (máximo cuatro hijos).
     for (int i = 0; i < 4; i++) {
         if (this->esCoordenada(min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i])) {
             Nodo* hijo = new Nodo(min->mat, min->espacio_vacio.x, min->espacio_vacio.y, min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i], min->nivel + 1, min);
             hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
-            nodosVivos.push(hijo);
+            nodosVivos->push(hijo);
         }
     }
 
-    min = nodosVivos.top();
-    nodosVivos.pop();
+    min = nodosVivos->top();
+    nodosVivos->pop();
     for (int i = 0; i < this->tipo_puzzle; i++)
         for (int j = 0; j < this->tipo_puzzle; j++)
             this->puzzle[0][i][j] = min->mat[i][j];
+
+    delete min;
+    delete raiz;
+    delete nodosVivos;
     return;
 }
 
@@ -263,22 +281,22 @@ void Puzzle::swap(int direccion) {
         for (int j = 0; j < this->tipo_puzzle; j++) {
             if (this->puzzle[0][i][j] == "0") {
                 switch (direccion) {
-                case 1:
+                case 1: //Intercambio con el elemento superior.
                     auxiliar = this->puzzle[0][i][j];
                     this->puzzle[0][i][j] = this->puzzle[0][i - 1][j];
                     this->puzzle[0][i - 1][j] = auxiliar;
                     break;
-                case 2:
+                case 2: //Intercambio con el elemento inferior.
                     auxiliar = this->puzzle[0][i][j];
                     this->puzzle[0][i][j] = this->puzzle[0][i + 1][j];
                     this->puzzle[0][i + 1][j] = auxiliar;
                     break;
-                case 3:
+                case 3: //Intercambio con el elemento a la izquierda.
                     auxiliar = this->puzzle[0][i][j];
                     this->puzzle[0][i][j] = this->puzzle[0][i][j - 1];
                     this->puzzle[0][i][j - 1] = auxiliar;
                     break;
-                case 4:
+                case 4: //Intercambio con el elemento a la derecha.
                     auxiliar = this->puzzle[0][i][j];
                     this->puzzle[0][i][j] = this->puzzle[0][i][j + 1];
                     this->puzzle[0][i][j + 1] = auxiliar;
@@ -344,7 +362,7 @@ void Puzzle::imprime_Puzzle(vector<vector<string>> *puzzle) {
                 }
             }
         }
-    }
+    } //Se imprimen todas las fichas del puzzle.
     al_flip_display();
     al_destroy_bitmap(puzzle_3x3); 
     al_destroy_bitmap(puzzle_4x4);
@@ -376,6 +394,7 @@ void Puzzle::pantalla_solucion() {
     al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
 }
 
+//Se generan mensajes que indican si el puzzle fue resuelto o no.
 void Puzzle::pantalla_puzzleResuelto(Nodo *puzzle, int caso) {
     al_flip_display();
     al_draw_filled_rectangle(0, 0, 800, 100, al_map_rgb(0, 0, 0));
@@ -383,7 +402,7 @@ void Puzzle::pantalla_puzzleResuelto(Nodo *puzzle, int caso) {
         al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLE RESUELTO");
     if (caso == 2)
         al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SOLUCION NO CALCULABLE");
-    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 80, ALLEGRO_ALIGN_CENTRE, ("TOTAL DE MOVIMIENTOS: " + to_string(puzzle->nivel)).c_str());
+    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 100, ALLEGRO_ALIGN_CENTRE, ("TOTAL DE MOVIMIENTOS: " + to_string(puzzle->nivel)).c_str());
     al_flip_display();
     return;
 }

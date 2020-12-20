@@ -2,12 +2,12 @@
 Proyecto Final - Análisis de eficiencia de los algoritmos de ordenación.
 
 Integrantes de equipo:
-    - Erik Alejandro Gómez Martánez.
+    - Erik Alejandro Gómez Martínez.
     - Israel Alejandro Mora González.
     - Ángel Gabriel Galindo López.
     - José Emmanuel Rodríguez López.
 
-Fecha de entrega: 18 de diciembre de 2020.
+Fecha de entrega: 21-23 de diciembre de 2020.
 
 Descripción general: Análisis de eficiencia de los métodos de ordenamiento cerrados. Se realiza un análisis comparativo
 entre los distintos métodos de ordenamiento. Las pruebas se realizan sobre un vector que es generado de manera ascendente
