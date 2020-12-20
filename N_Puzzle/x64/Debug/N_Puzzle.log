@@ -1,2 +1,3 @@
-﻿  Juego.cpp
-  N_Puzzle.vcxproj -> C:\Users\erikg\Desktop\Proyecto Final\N_Puzzle\x64\Debug\N_Puzzle.exe
+﻿  Puzzle.cpp
+C:\Users\Usuario\Desktop\N-Puzzle\N_Puzzle\Puzzle.cpp(202): warning C4715: 'Puzzle::resuelve': no todas las rutas de acceso de control devuelven un valor
+  N_Puzzle.vcxproj -> C:\Users\Usuario\Desktop\N-Puzzle\N_Puzzle\x64\Debug\N_Puzzle.exe

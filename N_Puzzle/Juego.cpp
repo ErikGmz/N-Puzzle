@@ -299,7 +299,7 @@ void Juego::imprimir_fin_simulacion(int parametro) {
         al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SIMULACION TERMINADA");
     }
     else if (parametro == 2){
-        al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SISTEMA SIN SOLUCION");
+        al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLE SIN SOLUCION");
     }
     else {
         al_draw_text(this->letra, al_map_rgb(190, 231, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLES IGUALES");
@@ -352,6 +352,7 @@ void Juego::imprimir_interfaz_modo_manual(Jugador jugador_actual, Puzzle* tabler
     ALLEGRO_BITMAP* regresar = al_load_bitmap("Sources/icono regresar.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
+    
     for (int i = 1; i < 25; i++) {
         string aux = "Sources/Fichas/F";
         ALLEGRO_BITMAP* elemento = al_load_bitmap((aux + to_string(i) + ".png").c_str());
@@ -535,7 +536,7 @@ void Juego::imprimir_interfaz_captura(int conteo, int tipo_puzzle, Puzzle *inici
 //Se retorna un vector con las coordenadas de espacios restantes de un tablero.
 vector<Coordenadas> Juego::lugares_disponibles(Puzzle* tablero, int tipo_tablero) {
     vector<Coordenadas> lista_espacios;
-    int x_inicial, y_inicial;
+    int x_inicial = 0, y_inicial = 0;
 
     switch (this->dificultad) {
     case 3: 
@@ -828,7 +829,7 @@ valores Juego::convertir_string(string valor) {
 vector<Par_coordenadas> Juego::fichas_a_mover(Puzzle *tablero) {
     vector<Par_coordenadas> lista_fichas;
     Par_coordenadas arriba, abajo, izquierda, derecha;
-    int x_inicial, y_inicial, x_final, y_final;
+    int x_inicial = 0, y_inicial = 0, x_final = 0, y_final = 0;
     bool definido = false;
 
     for (int i = 0; i < this->dificultad; i++) {
@@ -997,6 +998,7 @@ vector<Par_coordenadas> Juego::fichas_a_mover(Puzzle *tablero) {
 
 //---Constructor---//.
 Juego::Juego(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana) {
+    this->dificultad = 0;
     this->tiempo = 0;
     this->x = 0;
     this->y = 0;
@@ -1756,10 +1758,17 @@ void Juego::modo_manual(Jugador &jugador_actual) {
                 *parametros = this->fichas_a_mover(tablero_inicial);
 
                 al_play_sample(deslizar, 2.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                auxiliar = 7;
             }
             else if (auxiliar == 5) {
-                //tablero_inicial->sugerir_movimiento();
-                //veces_ayuda++;
+                tablero_inicial->sugerir_movimiento(tablero_final);
+                this->imprimir_interfaz_modo_manual(jugador_actual, tablero_inicial, tablero_final);
+
+                delete parametros;
+                parametros = new vector<Par_coordenadas>;
+                *parametros = this->fichas_a_mover(tablero_inicial);
+
+                veces_ayuda++;
             }
             else if (auxiliar == 6) {
                 al_play_sample(avance, 5.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -1871,10 +1880,6 @@ void Juego::modo_manual(Jugador &jugador_actual) {
 	}
 	if (jugador_actual.getPuntaje() < 0) jugador_actual.setPuntaje(0);
     delete tablero_inicial, tablero_final;
-    al_destroy_sample(apuntado);
-    al_destroy_sample(musica_juego);
-    al_destroy_sample(avance);
-    al_destroy_sample(deslizar);
 }
 
 //Se genera el menú para la solicitar los puzzles.
@@ -1910,7 +1915,7 @@ void Juego::capturar_puzzles(Puzzle*& inicio, Puzzle*& meta, ALLEGRO_SAMPLE_ID i
         }
     }
     int limite = pow(this->dificultad, 2) - 1, puzzle;
-    int conteo = 1, auxiliar;
+    int conteo = 1, auxiliar = 0;
 
     while (conteo <= pow(this->dificultad, 2) * 2 - 2 && !cancelar) {
         int aux;
@@ -1979,6 +1984,7 @@ void Juego::capturar_puzzles(Puzzle*& inicio, Puzzle*& meta, ALLEGRO_SAMPLE_ID i
                     }
                     conteo++;
                     this->imprimir_interfaz_captura(aux, puzzle, inicio, meta);
+                    auxiliar = 27;
 
                     if (conteo <= pow(this->dificultad, 2) * 2 - 2) {
                         al_play_sample(deslizar, 2.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);

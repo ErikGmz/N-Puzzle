@@ -14,10 +14,13 @@ Nodo::Nodo(vector<vector<string>> &mat,int x,int y,int newX,int newY,int nivel,N
     this->costo = 0; 
     this->nivel = nivel;  
     // Nuevas coordenadas del espacio en blanco. 
-    this->x = newX; 
-    this->y = newY; 
+    this->espacio_vacio.x = newX; 
+    this->espacio_vacio.y = newY; 
 }
-
+//Destructor.
+Nodo::~Nodo() {
+    this->padre = NULL;
+}
 //---Métodos---//.
 //Se intercambian los valores de la matriz.
 void Nodo::swap(string &val,string &newVal) {

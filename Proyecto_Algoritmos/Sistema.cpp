@@ -68,7 +68,7 @@ void Sistema::pantalla_StatusTiempo() { //Se imprime un an�lisis de los tiempo
     cout << "\tMETODO\t\tORDENADO\tDESORDENADO\tORDEN INVERSO\n" << endl;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
     for (int i = 0; i < 7; i++)
-        cout << this->metodos[i].nombre << "\t\t" << this->metodos[i].tiempoAse << " ms\t\t" << this->metodos[i].tiempoAl << " ms\t\t" << this->metodos[i].tiempoDes << " ms \n" << endl;
+        cout << this->metodos[i].nombre << "\t\t" << this->metodos[i].tiempo_ascendente << " ms\t\t" << this->metodos[i].tiempo_aleatorio << " ms\t\t" << this->metodos[i].tiempo_descendente << " ms \n" << endl;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
     cout << "----Presone una tecla para visualizar el analisis de calculos realizados---" << endl;
     cin.get();
@@ -89,21 +89,21 @@ void Sistema::pantalla_StatusCalculos() { //Se imprime un an�lisis de los calc
         cout << "COMP";
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
         this->gotoxy(24, 4 + y);
-        cout << this->metodos[i].C_Ase;
+        cout << this->metodos[i].comp_ascendente;
         this->gotoxy(40, 4 + y); 
-        cout << this->metodos[i].C_Al;
+        cout << this->metodos[i].comp_aleatorio;
         this->gotoxy(56, 4 + y);
-        cout << this->metodos[i].C_Des << endl << endl;
+        cout << this->metodos[i].comp_descendente << endl << endl;
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
         this->gotoxy(15, 5 + y);
         cout << "MOV";
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
         this->gotoxy(24, 5 + y);
-        cout << this->metodos[i].M_Ase;
+        cout << this->metodos[i].permut_ascendente;
         this->gotoxy(40, 5 + y);
-        cout << this->metodos[i].M_Al;
+        cout << this->metodos[i].permut_aleatorio;
         this->gotoxy(56, 5 + y);
-        cout << this->metodos[i].M_Des << endl << endl;
+        cout << this->metodos[i].permut_descendente << endl << endl;
     }
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
     this->gotoxy(35, 25);
@@ -169,25 +169,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->insertionSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->insertionSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->insertionSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 1:
         this->metodos[i].nombre = "Selection Sort";
@@ -197,25 +197,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->selectionSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->selectionSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->selectionSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 2:
         this->metodos[i].nombre = "Bubble Sort";
@@ -225,25 +225,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->bubbleSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->bubbleSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->bubbleSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 3:
         this->metodos[i].nombre = "Merge Sort";
@@ -253,25 +253,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->mergeSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->mergeSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->mergeSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 4:
         this->metodos[i].nombre = "Shell Sort";
@@ -281,25 +281,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->shellSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->shellSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->shellSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 5:
         this->metodos[i].nombre = "Quick Sort";
@@ -309,25 +309,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->quickSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->quickSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->quickSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     case 6:
         this->metodos[i].nombre = "Heap Sort";
@@ -337,25 +337,25 @@ void Sistema::ejecutaMetodos(int i) { //Se ejecutan todos los m�todos de orden
         this->timer.start();
         vecOrd = this->vector->heapSort();
         this->timer.stop();
-        this->metodos[i].tiempoAse = this->timer.getTime();
-        this->metodos[i].C_Ase = vecOrd.getC();
-        this->metodos[i].M_Ase = vecOrd.getM();
+        this->metodos[i].tiempo_ascendente = this->timer.getTime();
+        this->metodos[i].comp_ascendente = vecOrd.getC();
+        this->metodos[i].permut_ascendente = vecOrd.getM();
         //Prueba vector desordenado (Caso intermedio).
         this->vector->randomFill(1, this->vector->length());
         this->timer.start();
         vecOrd = this->vector->heapSort();
         this->timer.stop();
-        this->metodos[i].tiempoAl = this->timer.getTime();
-        this->metodos[i].C_Al = vecOrd.getC();
-        this->metodos[i].M_Al = vecOrd.getM();
+        this->metodos[i].tiempo_aleatorio = this->timer.getTime();
+        this->metodos[i].comp_aleatorio = vecOrd.getC();
+        this->metodos[i].permut_aleatorio = vecOrd.getM();
         //Prueba vector Descendente (Peor caso).
         this->vector->DownFill();
         this->timer.start();
         vecOrd = this->vector->heapSort();
         this->timer.stop();
-        this->metodos[i].tiempoDes = this->timer.getTime();
-        this->metodos[i].C_Des = vecOrd.getC();
-        this->metodos[i].M_Des = vecOrd.getM();
+        this->metodos[i].tiempo_descendente = this->timer.getTime();
+        this->metodos[i].comp_descendente = vecOrd.getC();
+        this->metodos[i].permut_descendente = vecOrd.getM();
         break;
     }
     return;

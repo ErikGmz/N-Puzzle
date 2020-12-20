@@ -4,3 +4,5 @@ C:\Users\erikg\Desktop\Proyecto Final\Proyecto_Algoritmos\Debug\Proyecto_Algorit
 C:\Users\erikg\Desktop\Proyecto Final\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.pdb
 C:\Users\compaq\Desktop\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.exe
 C:\Users\compaq\Desktop\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.pdb
+C:\Users\Usuario\Desktop\N-Puzzle\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.exe
+C:\Users\Usuario\Desktop\N-Puzzle\Proyecto_Algoritmos\Debug\Proyecto_Algoritmos.pdb

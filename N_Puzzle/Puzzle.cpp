@@ -22,7 +22,7 @@ char Puzzle::validar_entrada(ALLEGRO_EVENT evento) {
 
 //Se verifica si la entrada actual es repetida/válida o no.
 bool Puzzle::entrada_valida(int fila, int columna) {
-    int limite;
+    int limite = 0;
 
     switch (this->tipo_puzzle) {
     case 3: limite = 9; break;
@@ -48,11 +48,11 @@ bool Puzzle::entrada_valida(int fila, int columna) {
 }
 
 //Se calcula el costo que requiere resolver un puzzle inicial a uno meta.
-int Puzzle::calculaCosto(vector<vector<string>>& puzzle_inicial, vector<vector<string>>& puzzle_final) {
+int Puzzle::calcula_Costo(vector<vector<string>>& puzzle_inicial, vector<vector<string>>& puzzle_final) {
     int costo = 0;
     for (int i = 0; i < this->tipo_puzzle; i++) {
         for (int j = 0; j < this->tipo_puzzle; j++) {
-            if (puzzle_inicial[i][j] != "0" && puzzle_final[i][j] != puzzle_final[i][j]) {
+            if (puzzle_inicial[i][j] != "0" && puzzle_inicial[i][j] != puzzle_final[i][j]) {
                 costo++;
             }
         }
@@ -62,16 +62,16 @@ int Puzzle::calculaCosto(vector<vector<string>>& puzzle_inicial, vector<vector<s
 
 //Se verifica si dos elementos, según el tamaño del puzzle.
 bool Puzzle::esCoordenada(int x, int y) {
-    return (x >= 0 && x < this->tipo_puzzle&& y >= 0 && y < this->tipo_puzzle);
+    return ((x >= 0 && x < this->tipo_puzzle) && (y >= 0 && y < this->tipo_puzzle));
 }
 
 //Se imprime la ruta más optima para resolver el puzzle.
-void Puzzle::imprimeRuta(Nodo* raiz) {
+void Puzzle::muestra_Solucion(Nodo* raiz) {
     if (raiz == NULL)
         return;
-    this->imprimeRuta(raiz->padre);
-    this->imprimePuzzle();
-    cout << endl;
+    this->muestra_Solucion(raiz->padre);
+    this->imprime_Puzzle(&(raiz->mat));
+    al_rest(1);
 }
 
 //Se convierte un string a un valor numérico.  
@@ -85,12 +85,13 @@ int Puzzle::convertir_string(string valor) {
     else if (valor == "19") return 18;  else if (valor == "20") return 19;  else if (valor == "21") return 20;
     else if (valor == "22") return 21;  else if (valor == "23") return 22;  else if (valor == "24") return 23;
     else return 0;
-}
+}       
 
 //---Constructor y destructor---//.
 //Constructor con argumentos.
 Puzzle::Puzzle(ALLEGRO_FONT* formato, ALLEGRO_DISPLAY* ventana, int tipo_puzzle) {
     this->x = this->y = this->contador = 0;
+    this->parpadeo = true;
     this->letra = formato;
     this->pantalla = ventana;
     this->tipo_puzzle = tipo_puzzle;
@@ -131,48 +132,112 @@ void Puzzle::generaPuzzle() {
 	return;
 }
 
+//Devuelve el espacio vacio del puzzle.
+Espacio Puzzle::getEspacioVacio() {
+    Espacio espacio_vacio;
+    for (int i = 0; i < this->tipo_puzzle; i++)
+        for (int j = 0; j < this->tipo_puzzle; j++)
+            if (this->puzzle[0][i][j] == "0") {
+                espacio_vacio.x = i;
+                espacio_vacio.y = j;
+                break;
+            }
+    return espacio_vacio;
+}
+
 //Si tiene solución, se resuelve el puzzle por medio del algoritmo branch and bound.
-void Puzzle::resuelve(int x,int y, vector<vector<string>> &puzzle_final) {
+bool Puzzle::resuelve(Puzzle *puzzle_final) {
     // Para los movimientos de las fichas.
     // Abajo, Izq, Arriba, Der.
-    int row[] = { 1, 0, -1, 0 }; 
-    int col[] = { 0, -1, 0, 1 }; 
+    int fil[] = { 1, 0, -1, 0 };
+    int col[] = { 0, -1, 0, 1 };
 
-    // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de busqeda.
-    priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; 
+    // Coordenadas del espacio vacio del puzzle.
+    Espacio espacio_vacio = this->getEspacioVacio();
+    int x = espacio_vacio.x;
+    int y = espacio_vacio.y;
+
+    priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
 
     // Creamos un nuevo nodo y calculamos su costo.
     Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL);  
+    raiz->costo = this->calcula_Costo(*(this->puzzle), *(puzzle_final->puzzle)); 
 
-    raiz->costo = this->calculaCosto(*(this->puzzle), puzzle_final); 
-    // Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
-
-    nodosVivos.push(raiz); 
+    nodosVivos.push(raiz);// Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
+ 
     // Buscamos el nodo vivo de menor costo, agregamos a sus hijos a la lista de nodos vivos y lo eliminamos de la lista.
-
-    while (!nodosVivos.empty()) { 
+    this->pantalla_solucion();
+    while (!nodosVivos.empty()) {
         Nodo* min = nodosVivos.top(); //Extraemos el nodo vivo con menor costo estimado.
-
         nodosVivos.pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
 
-        if (min->costo == 0) { // Si el nodo extraido es un nodo solucion.
-            this->imprimeRuta(min); //Imprimimos el recorrido, de la raiz local al destino.
-            return; 
+        if (min->costo == 0 || min->nivel >= 30) { // Si el nodo extraido es un nodo solucion.
+            this->muestra_Solucion(min);
+            if (min->costo == 0)
+                this->pantalla_puzzleResuelto(min, 1);
+            else
+                this->pantalla_puzzleResuelto(min, 2);
+            return true;
         } 
 
-        //Ciclo para crear los nodos hijo del elemento extraido (maximo cuatro hijos por nodoi).
+        //Generamos los nodos hijo del elemento extraido (máximo cuatro hijos).
         for (int i = 0; i < 4; i++) {
-            if (this->esCoordenada(min->x + row[i], min->y + col[i])) {
-
-                // Creamos un nuevo hijo y calculamos su costo.
-                Nodo* hijo = new Nodo(min->mat, min->x, min->y, min->x + row[i], min->y + col[i], min->nivel + 1, min);
-
-                hijo->costo = this->calculaCosto(hijo->mat, puzzle_final);
-                // Agregamos el hijo a la lista de nodos vivos. 
-                nodosVivos.push(hijo);
+            if (this->esCoordenada(min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i])) {
+                Nodo* hijo = new Nodo(min->mat, min->espacio_vacio.x, min->espacio_vacio.y, min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i], min->nivel + 1, min);
+                if (hijo->padre != raiz) {
+                    if (hijo->mat == hijo->padre->padre->mat)
+                        delete hijo;
+                    else {
+                        hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
+                        nodosVivos.push(hijo);
+                    }
+                }
+                else {
+                    hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
+                    nodosVivos.push(hijo);
+                }
             }
         }
     } 
+}
+
+//Realiza un movimiento en el puzzle que acerca al usuario a la solución.
+void Puzzle::sugerir_movimiento(Puzzle* puzzle_final) {
+   // Para los movimientos de las fichas.
+   // Abajo, Izq, Arriba, Der.
+    int fil[] = { 1, 0, -1, 0 };
+    int col[] = { 0, -1, 0, 1 };
+
+    // Coordenadas del espacio vacio del puzzle.
+    Espacio espacio_vacio = this->getEspacioVacio();
+    int x = espacio_vacio.x;
+    int y = espacio_vacio.y;
+
+    priority_queue<Nodo*, vector<Nodo*>, comp> nodosVivos; // Creamos una cola de prioridad para almacenar los nodos vivos del arbol de búsqeda.
+
+    // Creamos un nuevo nodo y calculamos su costo.
+    Nodo* raiz = new Nodo(*(this->puzzle), x, y, x, y, 0, NULL);
+    raiz->costo = this->calcula_Costo(*(this->puzzle), *(puzzle_final->puzzle));
+    nodosVivos.push(raiz); // Agregamos la raiz a la cola de prioridad (lista de nododos vivos).
+
+    Nodo* min = nodosVivos.top(); //Extraemos el nodo vivo con menor costo estimado.
+    nodosVivos.pop(); //Eliminamos al nodo extraido de la lista de nodos vivos.
+
+    //Generamos todos los nodos hijo del elemento extraido (máximo cuatro hijos).
+    for (int i = 0; i < 4; i++) {
+        if (this->esCoordenada(min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i])) {
+            Nodo* hijo = new Nodo(min->mat, min->espacio_vacio.x, min->espacio_vacio.y, min->espacio_vacio.x + col[i], min->espacio_vacio.y + fil[i], min->nivel + 1, min);
+            hijo->costo = this->calcula_Costo(hijo->mat, *(puzzle_final->puzzle));
+            nodosVivos.push(hijo);
+        }
+    }
+
+    min = nodosVivos.top();
+    nodosVivos.pop();
+    for (int i = 0; i < this->tipo_puzzle; i++)
+        for (int j = 0; j < this->tipo_puzzle; j++)
+            this->puzzle[0][i][j] = min->mat[i][j];
+    return;
 }
 
 //Se compara si ambos puzzles son exactamente iguales.
@@ -241,17 +306,12 @@ int Puzzle::inversiones(int* arreglo) {
 }
 
 //Se imprime el contenido del puzzle.
-void Puzzle::imprimePuzzle() {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
+void Puzzle::imprime_Puzzle(vector<vector<string>> *puzzle) {
     al_flip_display();
 
     ALLEGRO_BITMAP* puzzle_3x3 = al_load_bitmap("Sources/TableroFacil3x3.png");
     ALLEGRO_BITMAP* puzzle_4x4 = al_load_bitmap("Sources/TableroMedio4x4.png");
     ALLEGRO_BITMAP* puzzle_5x5 = al_load_bitmap("Sources/TableroDificil5x5.png");
-    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
-    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
-    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
-    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
 
     vector<ALLEGRO_BITMAP*>* fichas = new vector<ALLEGRO_BITMAP*>;
     for (int i = 1; i < 25; i++) {
@@ -259,15 +319,7 @@ void Puzzle::imprimePuzzle() {
         ALLEGRO_BITMAP* elemento = al_load_bitmap((aux + to_string(i) + ".png").c_str());
         fichas->push_back(elemento);
     }
-    al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "RESOLVIENDO PUZZLE...");
-
-    al_draw_bitmap(cubo4, 50, 415, NULL);
-    al_draw_bitmap(cubo1, 210, 435, NULL);
-    al_draw_bitmap(cubo2, 330, 435, NULL);
-    al_draw_bitmap(cubo3, 450, 435, NULL);
-    al_draw_bitmap(cubo1, 570, 435, NULL);
-    al_draw_bitmap(cubo2, 690, 435, NULL);
-
+        
     switch (this->tipo_puzzle) {
     case 3:
         al_draw_bitmap(puzzle_3x3, 319, 180, NULL);
@@ -282,8 +334,8 @@ void Puzzle::imprimePuzzle() {
 
     for (int i = 0; i < this->tipo_puzzle; i++) {
         for (int j = 0; j < this->tipo_puzzle; j++) {
-            if (this->puzzle[0][i][j] != "0") {
-                int auxiliar2 = this->convertir_string(this->puzzle[0][i][j]);
+            if (puzzle[0][i][j] != "0") {
+                int auxiliar2 = this->convertir_string(puzzle[0][i][j]);
 
                 switch (this->tipo_puzzle) {
                 case 3: al_draw_bitmap(fichas[0][auxiliar2], 319 + j * 53 + 3, 180 + i * 53 + 3, NULL); break;
@@ -294,10 +346,46 @@ void Puzzle::imprimePuzzle() {
         }
     }
     al_flip_display();
-    al_destroy_bitmap(puzzle_3x3); al_destroy_bitmap(puzzle_4x4);
-    al_destroy_bitmap(puzzle_5x5); al_destroy_bitmap(cubo1);
-    al_destroy_bitmap(cubo2); al_destroy_bitmap(cubo3);
-    al_destroy_bitmap(cubo4); delete fichas;
+    al_destroy_bitmap(puzzle_3x3); 
+    al_destroy_bitmap(puzzle_4x4);
+    al_destroy_bitmap(puzzle_5x5);  
+    delete fichas;
+}
+
+//Se genera la pantalla de solución de puzzles.
+void Puzzle::pantalla_solucion() {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_flip_display();
+
+    ALLEGRO_BITMAP* cubo1 = al_load_bitmap("Sources/Cubo chico 1.png");
+    ALLEGRO_BITMAP* cubo2 = al_load_bitmap("Sources/Cubo chico 2.png");
+    ALLEGRO_BITMAP* cubo3 = al_load_bitmap("Sources/Cubo chico 3.png");
+    ALLEGRO_BITMAP* cubo4 = al_load_bitmap("Sources/Cubo grande.png");
+
+    al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "RESOLVIENDO PUZZLE...");
+
+    al_draw_bitmap(cubo4, 50, 415, NULL);
+    al_draw_bitmap(cubo1, 210, 435, NULL);
+    al_draw_bitmap(cubo2, 330, 435, NULL);
+    al_draw_bitmap(cubo3, 450, 435, NULL);
+    al_draw_bitmap(cubo1, 570, 435, NULL);
+    al_draw_bitmap(cubo2, 690, 435, NULL);
+
+    al_flip_display();
+    al_destroy_bitmap(cubo1); al_destroy_bitmap(cubo2);
+    al_destroy_bitmap(cubo3); al_destroy_bitmap(cubo4);
+}
+
+void Puzzle::pantalla_puzzleResuelto(Nodo *puzzle, int caso) {
+    al_flip_display();
+    al_draw_filled_rectangle(0, 0, 800, 100, al_map_rgb(0, 0, 0));
+    if (caso == 1)
+        al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "PUZZLE RESUELTO");
+    if (caso == 2)
+        al_draw_text(this->letra, al_map_rgb(164, 255, 255), 400, 50, ALLEGRO_ALIGN_CENTRE, "SOLUCION NO CALCULABLE");
+    al_draw_text(this->letra, al_map_rgb(189, 249, 201), 400, 80, ALLEGRO_ALIGN_CENTRE, ("TOTAL DE MOVIMIENTOS: " + to_string(puzzle->nivel)).c_str());
+    al_flip_display();
+    return;
 }
 
 //-----Métodos de la clase 'Puzzle_facil'-----//.
@@ -314,7 +402,7 @@ bool Puzzle_facil::resolvible_manual() {
     }
 
     inversiones = this->inversiones(arreglo);
-    delete arreglo;
+    delete [] arreglo;
     return inversiones % 2 == 0;
 }
 
@@ -345,7 +433,7 @@ bool Puzzle_medio::resolvible_manual() {
     }
 
     inversiones = this->inversiones(arreglo);
-    delete arreglo;
+    delete [] arreglo;
 
     if (this->posicion_x_cero() % 2 != 0) {
         return (inversiones % 2 == 0);
@@ -369,7 +457,7 @@ bool Puzzle_dificil::resolvible_manual() {
     }
 
     inversiones = this->inversiones(arreglo);
-    delete arreglo;
+    delete [] arreglo;
     return inversiones % 2 == 0;
 }
 #endif

@@ -77,7 +77,7 @@ int main() {
                                             auxiliar = new char[40];
                                             strftime(auxiliar, 40, "%d/%m/%Y", hora_local);
                                             jugador.setfecha(auxiliar);
-                                            delete auxiliar;
+                                            delete [] auxiliar;
                                             if (!juego.pantalla_finJuego(jugador)) {
                                                 cancelado = true;
                                             }
@@ -116,10 +116,13 @@ int main() {
                                             }
                                         }
                                         else {
-                                            inicio->imprimePuzzle();
-                                            al_rest(30);
-                                            //Colocar Branch and Bound.
-                                            al_stop_sample(&id2);
+                                            if (inicio->resuelve(fin)) {
+                                                al_stop_sample(&id2);
+                                                ALLEGRO_SAMPLE* ganar = al_load_sample("Sounds/Super Mario Bros 2 (NES) Music   World Clear.mp3");
+                                                al_play_sample(ganar, 0.6, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                                                al_rest(5);
+                                                al_destroy_sample(ganar);
+                                            }
                                             if (!juego.pantalla_fin_simulacion(1)) {
                                                 cancelado = true;
                                             }
@@ -137,7 +140,6 @@ int main() {
                                         cancelado = true;
                                         break;
                                     }
-                                    //delete puzzle_inicio;
                                 }
                             } while (repetir2 && !cancelado);
                         }

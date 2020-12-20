@@ -13,15 +13,15 @@ using namespace std;
 //--------Estructuras de datos---------
 struct Metodo {
     string nombre;
-    clock_t tiempoAse;
-    clock_t tiempoAl;
-    clock_t tiempoDes;
-    long int C_Ase;
-    long int C_Al;
-    long int C_Des;
-    long int M_Ase;
-    long int M_Al;
-    long int M_Des;
+    clock_t tiempo_ascendente;
+    clock_t tiempo_aleatorio;
+    clock_t tiempo_descendente;
+    long int comp_ascendente;
+    long int comp_aleatorio;
+    long int comp_descendente;
+    long int permut_ascendente;
+    long int permut_aleatorio;
+    long int permut_descendente;
 };
 
 class Sistema {

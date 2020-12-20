@@ -5,14 +5,19 @@
 //-----Librerías-----//.
 #include "Allegro.hpp"
 
+//-----Estructuras-----//.
+struct Espacio {
+    int x;
+    int y;
+};
+
 //-----Clase 'Nodo'-----//.
 class Nodo {
 public:
     //---Atributos---//.
     Nodo *padre;
     vector<vector<string>> mat;
-    int x; //Coordenada x del espacio vacio.
-    int y; //Coordenada y del espacio vacio.
+    Espacio espacio_vacio; // Coordenadas del espacio vacio del puzzle.
     int costo; //Numero de fichas fuera de su lugar.
     int nivel; //Nivel de profundidad del nodo (numero de movimientos para la solución).
 

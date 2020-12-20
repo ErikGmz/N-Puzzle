@@ -1,2 +1,4 @@
 C:\Users\erikg\Desktop\Proyecto Final\N_Puzzle\x64\Debug\N_Puzzle.exe
 C:\Users\erikg\Desktop\Proyecto Final\N_Puzzle\x64\Debug\N_Puzzle.pdb
+C:\Users\Usuario\Desktop\N-Puzzle\N_Puzzle\x64\Debug\N_Puzzle.exe
+C:\Users\Usuario\Desktop\N-Puzzle\N_Puzzle\x64\Debug\N_Puzzle.pdb
